@@ -1,19 +1,19 @@
 package com.codingchili.mouse.enigma
 
-import android.app.Activity
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import com.codingchili.mouse.enigma.secret.Credential
 import com.codingchili.mouse.enigma.secret.CredentialBank
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.security.Security
 
 /**
  * @author Robin Duda
  */
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
     private val bank: CredentialBank = CredentialBank()
 
     init {
@@ -23,8 +23,8 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
+        /*val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)*/
 
         val button = findViewById<FloatingActionButton>(R.id.add_pw)
         val list = findViewById<ListView>(R.id.list_pw)

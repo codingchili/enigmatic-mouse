@@ -1,8 +1,19 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+    <style name="MouseTheme" parent="Theme.MaterialComponents">
         <!-- Customize your theme here. -->
+        <!--<item name="windowActionBar">false</item>-->
+        <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>
+
+        <!-- your app branding color for the app bar -->
+        <item name="colorPrimary">@color/primary</item>
+        <!-- darker variant for the status bar and contextual app bars -->
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <!-- theme UI controls like checkboxes and text fields -->
+        <item name="colorAccent">@color/accent</item>
+
+        <item name="navigationViewStyle">@style/Widget.Design.NavigationView</item>
 
         <!-- Customize your theme here. -->
         <item name="floatingActionButtonStyle">@style/Widget.Design.FloatingActionButton</item>
