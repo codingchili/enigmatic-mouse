@@ -15,6 +15,9 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
         val nav: NavigationView = view?.findViewById(R.id.navigation_view)!!
 
         nav.setNavigationItemSelectedListener { menuItem ->
+
+            // todo something on menu click :)
+
             Toast.makeText(activity?.applicationContext, "xxx", Toast.LENGTH_SHORT).show()
             activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
             true

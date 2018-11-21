@@ -8,8 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.codingchili.mouse.enigma.secret.Credential
 import com.codingchili.mouse.enigma.secret.CredentialBank
+import com.codingchili.mouse.enigma.secret.FaviconLoader
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.security.Security
+
 
 /**
  * @author Robin Duda
@@ -32,17 +34,25 @@ class MainActivity : AppCompatActivity() {
 
         val button = findViewById<FloatingActionButton>(R.id.add_pw)
         val list = findViewById<ListView>(R.id.list_pw)
-        val adapter = object : ArrayAdapter<Credential>(this, android.R.layout.simple_list_item_2, bank.retrieve()) {
+        val adapter = object : ArrayAdapter<Credential>(this, R.layout.user_list, bank.retrieve()) {
 
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
-                var view: TwoLineListItem? = convertView as TwoLineListItem?
+                var view: View? = convertView
 
                 if (convertView == null) {
-                    view = layoutInflater.inflate(android.R.layout.simple_list_item_2, parent, false) as TwoLineListItem
+                    view = layoutInflater.inflate(R.layout.user_list, parent, false) as View
                 }
 
-                view?.findViewById<TextView>(android.R.id.text1)?.text = bank.retrieve()[position].url
-                view?.findViewById<TextView>(android.R.id.text2)?.text = bank.retrieve()[position].username
+                FaviconLoader(applicationContext).load(bank.retrieve()[position].url, { bitmap ->
+                    val imageView: ImageView = view?.findViewById(R.id.site_logo) as ImageView
+                    imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
+                    imageView.setImageBitmap(bitmap)
+                }, { exception ->
+                    Toast.makeText(super.getContext(), exception.message, Toast.LENGTH_SHORT).show()
+                })
+
+                view?.findViewById<TextView>(R.id.url)?.text = bank.retrieve()[position].url
+                view?.findViewById<TextView>(R.id.username)?.text = bank.retrieve()[position].username
 
                 return view
             }
@@ -51,21 +61,13 @@ class MainActivity : AppCompatActivity() {
         list.adapter = adapter
 
         button.setOnClickListener {
-
-            // todo: show dialog here.
-            bank.store(Credential("some_url", "some_user", "some_pass"))
+            bank.store(Credential("https://facebook.com/", "some_user", "some_pass"))
             adapter.notifyDataSetChanged()
             Toast.makeText(this, "added user to bank.", Toast.LENGTH_SHORT).show()
         }
 
-        list.setOnItemClickListener{ _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-
-            // todo: show dialog here for master password.
-            // on master password OK - show pass details and store master password until app closes.
-            // display last read, created, username, url as clickable link - open browser,
-            // password as clickable - copy to clipboard !!INSECURE!!
-
-            Toast.makeText(this, bank.retrieve()[position].username, Toast.LENGTH_SHORT).show()
+        list.setOnItemClickListener { _: AdapterView<*>?, view: View?, position: Int, _: Long ->
+            // do something.
         }
     }
 }

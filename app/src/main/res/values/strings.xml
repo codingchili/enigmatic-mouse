@@ -3,4 +3,5 @@
     <string name="menu_rate">Rate</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_info">Info</string>
+    <string name="menu_cache_clear">Clear cache</string>
 </resources>

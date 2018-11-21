@@ -11,15 +11,14 @@ class CredentialBank {
     private val master: String = "kaputt"
 
     init {
-        list.add(Credential("youtube.com", "rduda@kth.se", "********"))
-        list.add(Credential("google.com", "rduda@kth.se", "********"))
+        list.add(Credential("https://youtube.com/", "rduda@kth.se", "********"))
+        list.add(Credential("https://google.com/", "rduda@kth.se", "********"))
     }
 
     fun store(credential: Credential) {
         // 1. kdf on input password to verify master password.
         // 2. kdf to generate symmetric key.
-        var key : String =
-                String(SCrypt.generate(credential.password.toByteArray(), "".toByteArray(), 256, 32, 2, 256))
+        val key = String(SCrypt.generate(credential.password.toByteArray(), "".toByteArray(), 256, 32, 2, 256))
 
         Log.w("", "generated = " + key)
 

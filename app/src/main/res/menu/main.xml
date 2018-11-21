@@ -19,4 +19,9 @@
         android:title="@string/menu_info"
         android:icon="@drawable/baseline_info_24"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/clear_logo_cache"
+        android:title="@string/menu_cache_clear"
+        android:icon="@drawable/baseline_delete_outline_24"
+        app:showAsAction="never"/>
 </menu>
