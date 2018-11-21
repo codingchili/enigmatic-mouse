@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.codingchili.mouse.enigma.secret.Credential
 import com.codingchili.mouse.enigma.secret.CredentialBank
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -23,8 +24,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        /*val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)*/
+
+        findViewById<Toolbar>(R.id.bottom_app_bar).setOnClickListener {
+            val bottomNavDrawerFragment = BottomNavigationDrawerFragment()
+            bottomNavDrawerFragment.show(supportFragmentManager, bottomNavDrawerFragment.tag)
+        }
 
         val button = findViewById<FloatingActionButton>(R.id.add_pw)
         val list = findViewById<ListView>(R.id.list_pw)

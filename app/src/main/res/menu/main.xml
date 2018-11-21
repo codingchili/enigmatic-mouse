@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--android:icon="@drawable/baseline_favorite_white_24"-->
+    <item
+        android:id="@+id/app_bar_fav"
+        android:title="@string/menu_rate"
+        android:icon="@drawable/baseline_grade_24"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/app_bar_search"
+        android:title="@string/menu_feedback"
+        android:icon="@drawable/baseline_feedback_24"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/app_bar_settings"
+        android:title="@string/menu_info"
+        android:icon="@drawable/baseline_info_24"
+        app:showAsAction="never"/>
+</menu>

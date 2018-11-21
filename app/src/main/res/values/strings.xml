@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Mouse Enigma</string>
+    <string name="menu_rate">Rate</string>
+    <string name="menu_feedback">Feedback</string>
+    <string name="menu_info">Info</string>
 </resources>
