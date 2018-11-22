@@ -42,7 +42,7 @@ class FaviconLoader {
     private fun loadFromNetwork(site: String, callback: (Bitmap) -> Unit, error: (Throwable) -> Unit) {
         val client = AsyncHttpClient()
 
-        client.addHeader("X-Mashape-Key", "<your api key>")
+        client.addHeader("X-Mashape-Key", "")
         val params = RequestParams()
         params.add("site", site)
 

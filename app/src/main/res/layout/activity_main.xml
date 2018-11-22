@@ -4,24 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/root"
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="81dp">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="56dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/coordinatorLayout">
+        app:layout_constraintBottom_toBottomOf="@+id/coordinatorLayout" />
 
-        <ListView
-            android:id="@+id/list_pw"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/coordinatorLayout" />
-    </LinearLayout>
+<!--    <fragment
+        android:id="@+id/fragment"
+        android:name="com.codingchili.mouse.enigma.CredentialListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="56dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/coordinatorLayout"/>-->
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"
