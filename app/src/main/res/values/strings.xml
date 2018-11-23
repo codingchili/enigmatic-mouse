@@ -4,7 +4,7 @@
     <string name="menu_feedback">Feedback</string>
     <string name="menu_info">Info</string>
     <string name="menu_cache_clear">Clear cache</string>
-    <string name="hint_website">Website address</string>
+    <string name="hint_website">Website address (example.com)</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
 </resources>
