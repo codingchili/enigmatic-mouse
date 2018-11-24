@@ -1,15 +1,28 @@
 <resources>
     <string name="app_name">Mouse Enigma</string>
+
+    <!-- application menu. -->
     <string name="menu_rate">Rate</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_info">Info</string>
     <string name="menu_cache_clear">Clear cache</string>
-    <string name="hint_website">Website address (example.com)</string>
-    <string name="hint_username">Username</string>
-    <string name="hint_password">Password</string>
-    <string name="credential_save">Save</string>
+
+    <!-- fragment: add credentials. -->
     <string name="password_generate_tap">Tap to generate a strong password</string>
     <string name="password_weak">Weak!</string>
     <string name="password_ok">Hackable!</string>
     <string name="password_strong">Stronk!</string>
+    <string name="hint_website">Website address (example.com)</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="credential_save">Save</string>
+
+    <!-- fragment: master key setup. -->
+    <string name="master_password_header">Setup master password</string>
+    <string name="master_password_hint">Master password</string>
+    <string name="master_scan_fp_text">Scan fingerprint to confirm and encrypt</string>
+    <string name="fp_title">Scan Fingerprint</string>
+    <string name="fp_subtitle">The fingerprint key is used to encrypt your master password.</string>
+    <string name="fp_description">Your fingerprint is required to encrypt the master key.</string>
+    <string name="fp_cancel">Cancel</string>
 </resources>

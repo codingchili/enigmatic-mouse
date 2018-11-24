@@ -30,8 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .add(R.id.root, CredentialListFragment())
-                .addToBackStack("list")
+                .add(R.id.root, MasterSetupFragment())
                 .commit()
     }
 }
