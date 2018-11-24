@@ -25,9 +25,14 @@ class FaviconLoader {
 
     constructor(_context: Context) {
         context = _context
-        cache = DiskLruCache.open(context.cacheDir, 2, 1, 512_000_000) // 64MB disk cache.
+        cache = DiskLruCache.open(context.cacheDir, 3, 1, 512_000_000) // 64MB disk cache.
     }
 
+    /**
+     * Retrieves the image from cache if the image has been loaded previously.
+     * If the image has not been loaded previously then an image is retrieved
+     * from the network.
+     */
     fun load(site: String, callback: (Bitmap) -> Unit, error: (Throwable) -> Unit) {
         val cached: DiskLruCache.Snapshot? = cache.get(site.hashCode().toString())
 
@@ -40,71 +45,90 @@ class FaviconLoader {
         }
     }
 
+    /**
+     * Retrieves the image from the cache if the image is cached. If the image is not
+     * cached then the callback is never called.
+     */
+    fun get(site: String, callback: (Bitmap) -> Unit) {
+        val cached: DiskLruCache.Snapshot? = cache.get(site.hashCode().toString())
+        if (cached != null) {
+            callback.invoke(BitmapFactory.decodeStream(cached.getInputStream(0)))
+        }
+    }
+
     private fun loadIconReferences(site: String, callback: (Bitmap) -> Unit, error: (Throwable) -> Unit) {
         val client = AsyncHttpClient()
         val params = RequestParams()
 
-        client.get(site, params, object : AsyncHttpResponseHandler() {
+        try {
+            client.get(site, params, object : AsyncHttpResponseHandler() {
 
-            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?) {
-                if (responseBody != null) {
-                    val document: Document = Jsoup.parse(String(responseBody))
+                override fun onSuccess(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?) {
+                    if (responseBody != null) {
+                        val document: Document = Jsoup.parse(String(responseBody))
 
-                    // as loaded by browsers if no link-rel icon present.
-                    var largestLogoHref = "$site/favicon.ico"
-                    var largestIconSize = 0
+                        // as loaded by browsers if no link-rel icon present.
+                        var largestLogoHref = "$site/favicon.ico"
+                        var largestIconSize = 0
 
-                    // find the biggest logo in the index HTML document.
-                    document.getElementsByTag("link").forEach { element ->
-                        val rel = element.attr("rel")
+                        // find the biggest logo in the index HTML document.
+                        document.getElementsByTag("link").forEach { element ->
+                            val rel = element.attr("rel")
 
-                        Log.w("FaviconLoader", "element: " + element.toString())
+                            Log.w("FaviconLoader", "element: " + element.toString())
 
-                        if (rel.contains("icon") || rel.contains("shortcut") || rel.contains("apple-touch-icon")) {
-                            var size = 1
+                            if (rel.contains("icon") || rel.contains("shortcut") || rel.contains("apple-touch-icon")) {
+                                var size = 1
 
-                            if (element.hasAttr("sizes")) {
-                                size = Integer.parseInt(element.attr("sizes").split("x")[0])
-                            }
+                                if (element.hasAttr("sizes")) {
+                                    size = Integer.parseInt(element.attr("sizes").split("x")[0])
+                                }
 
-                            if (size > largestIconSize) {
-                                largestLogoHref = element.attr("href")
-                                largestIconSize = size
+                                if (size > largestIconSize) {
+                                    largestLogoHref = element.attr("href")
+                                    largestIconSize = size
+                                }
                             }
                         }
+
+                        Log.w("FaviconLoader", "biggest logo chosen from $largestLogoHref size was $largestIconSize")
+                        loadImageFromNetwork(site, makeResourceUrl(site, largestLogoHref), callback, error)
                     }
-
-                    Log.w("FaviconLoader", "biggest logo chosen from $largestLogoHref size was $largestIconSize")
-
-                    // support use-current-protocol type of links, but always default to https!
-                    if (largestLogoHref!!.startsWith("//")) {
-                        largestLogoHref = largestLogoHref!!.replace("//", "https://")
-                    }
-
-                    // prepend hostname if absolute url.
-                    if (largestLogoHref!!.startsWith("/")) {
-                        largestLogoHref = "$site$largestLogoHref"
-                    }
-
-                    // prepend protocol and hostname if relative url.
-                    if (!largestLogoHref!!.startsWith("https://")) {
-                        largestLogoHref = "$site/$largestLogoHref"
-                    }
-
-                    loadImageFromNetwork(site, largestLogoHref!!, callback, error)
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?, exception: Throwable?) {
-                if (exception == null) {
-                    // do nothing: site may not be a valid url.
-                } else {
-                    error.invoke(exception)
                 }
 
-            }
+                override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?, exception: Throwable?) {
+                    if (exception == null) {
+                        // do nothing: site may not be a valid url.
+                    } else {
+                        error.invoke(exception)
+                    }
 
-        })
+                }
+
+            })
+        } catch (e: Exception) {
+            // prevent malformed URL of crashing the browser. we don't care.
+        }
+    }
+
+    private fun makeResourceUrl(site: String, resource: String): String {
+        var url: String = resource
+
+        // support use-current-protocol type of links, but always default to https!
+        if (resource.startsWith("//")) {
+            url = resource.replace("//", "https://")
+        }
+
+        // prepend hostname if absolute url.
+        if (resource.startsWith("/")) {
+            url = "$site$resource"
+        }
+
+        // prepend protocol and hostname if relative url.
+        if (!resource.startsWith("https://")) {
+            url = "$site/$resource"
+        }
+        return url
     }
 
     private fun loadImageFromNetwork(site: String, imageUrl: String, callback: (Bitmap) -> Unit, error: (Throwable) -> Unit) {

@@ -31,7 +31,7 @@ class CredentialListFragment : Fragment() {
             view.findViewById<FloatingActionButton>(R.id.add_pw).setImageResource(R.drawable.add_icon_simple)
 
             activity?.supportFragmentManager?.beginTransaction()
-                    ?.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                    ?.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.fade_out)
                     ?.replace(R.id.root, AddCredentialFragment().setBank(bank))
                     ?.addToBackStack("add")
                     ?.commit()
@@ -47,13 +47,11 @@ class CredentialListFragment : Fragment() {
                     view = layoutInflater.inflate(R.layout.list_item_user, parent, false) as View
                 }
 
-                FaviconLoader(context).load(bank.retrieve()[position].url, { bitmap ->
+                FaviconLoader(context).get(bank.retrieve()[position].url) { bitmap ->
                     val imageView: ImageView = view?.findViewById(R.id.site_logo) as ImageView
                     imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
                     imageView.setImageBitmap(bitmap)
-                }, { exception ->
-                    Toast.makeText(super.getContext(), exception.message, Toast.LENGTH_LONG).show()
-                })
+                }
 
                 view?.findViewById<TextView>(R.id.url)?.text = bank.retrieve()[position].url
                 view?.findViewById<TextView>(R.id.username)?.text = bank.retrieve()[position].username
