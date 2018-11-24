@@ -14,16 +14,8 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="56dp"
         android:orientation="vertical"
+        android:background="@drawable/gradient"
         app:layout_constraintBottom_toBottomOf="@+id/coordinatorLayout" />
-
-    <!--    <fragment
-            android:id="@+id/fragment"
-            android:name="com.codingchili.mouse.enigma.CredentialListFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="56dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="@+id/coordinatorLayout"/>-->
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -56,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            app:backgroundTint="@color/primary"
+            app:backgroundTint="@color/secondary"
             app:fabAlignmentMode="end"
             app:navigationIcon="@drawable/baseline_menu_24"
             app:tint="@color/design_default_color_background" />
@@ -68,8 +60,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:src="@drawable/add_icon_simple"
+            android:background="@color/primary"
             app:fabSize="normal"
             app:layout_anchor="@id/bottom_app_bar"
+            app:backgroundTint="@color/primary"
             app:tint="@color/design_default_color_background" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
