@@ -7,4 +7,9 @@
     <string name="hint_website">Website address (example.com)</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
+    <string name="credential_save">Save</string>
+    <string name="password_generate_tap">Tap to generate a strong password</string>
+    <string name="password_weak">Weak!</string>
+    <string name="password_ok">Hackable!</string>
+    <string name="password_strong">Stronk!</string>
 </resources>
