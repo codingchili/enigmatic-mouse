@@ -10,6 +10,8 @@ import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.AsyncHttpResponseHandler
 import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.io.OutputStream
 import kotlin.math.roundToInt
 
@@ -18,42 +20,104 @@ import kotlin.math.roundToInt
  * Loads the favicon of the given url.
  */
 class FaviconLoader {
-    private val api : String = "https://realfavicongenerator.p.mashape.com/favicon/icon"
     private var cache: DiskLruCache
     private val context: Context
 
     constructor(_context: Context) {
         context = _context
-        cache = DiskLruCache.open(context.cacheDir, 1, 1, 256_000_000) // 32MB disk cache.
+        cache = DiskLruCache.open(context.cacheDir, 2, 1, 512_000_000) // 64MB disk cache.
     }
 
     fun load(site: String, callback: (Bitmap) -> Unit, error: (Throwable) -> Unit) {
         val cached: DiskLruCache.Snapshot? = cache.get(site.hashCode().toString())
 
         if (cached != null) {
-            Log.w("asd", "IS IN CACHE: " + site.hashCode().toString())
+            Log.w("FaviconLoader", "IS IN CACHE: " + site.hashCode().toString())
             callback.invoke(BitmapFactory.decodeStream(cached.getInputStream(0)))
         } else {
-            Log.w("asd", "IS NOT IN CACHE: " + site.hashCode().toString())
-            loadFromNetwork(site, callback, error)
+            Log.w("FaviconLoader", "IS NOT IN CACHE: " + site.hashCode().toString())
+            loadIconReferences(site, callback, error)
         }
     }
 
-    private fun loadFromNetwork(site: String, callback: (Bitmap) -> Unit, error: (Throwable) -> Unit) {
+    private fun loadIconReferences(site: String, callback: (Bitmap) -> Unit, error: (Throwable) -> Unit) {
+        val client = AsyncHttpClient()
+        val params = RequestParams()
+
+        client.get(site, params, object : AsyncHttpResponseHandler() {
+
+            override fun onSuccess(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?) {
+                if (responseBody != null) {
+                    val document: Document = Jsoup.parse(String(responseBody))
+
+                    // as loaded by browsers if no link-rel icon present.
+                    var largestLogoHref = "$site/favicon.ico"
+                    var largestIconSize = 0
+
+                    // find the biggest logo in the index HTML document.
+                    document.getElementsByTag("link").forEach { element ->
+                        val rel = element.attr("rel")
+
+                        Log.w("FaviconLoader", "element: " + element.toString())
+
+                        if (rel.contains("icon") || rel.contains("shortcut") || rel.contains("apple-touch-icon")) {
+                            var size = 1
+
+                            if (element.hasAttr("sizes")) {
+                                size = Integer.parseInt(element.attr("sizes").split("x")[0])
+                            }
+
+                            if (size > largestIconSize) {
+                                largestLogoHref = element.attr("href")
+                                largestIconSize = size
+                            }
+                        }
+                    }
+
+                    Log.w("FaviconLoader", "biggest logo chosen from $largestLogoHref size was $largestIconSize")
+
+                    // support use-current-protocol type of links, but always default to https!
+                    if (largestLogoHref!!.startsWith("//")) {
+                        largestLogoHref = largestLogoHref!!.replace("//", "https://")
+                    }
+
+                    // prepend hostname if absolute url.
+                    if (largestLogoHref!!.startsWith("/")) {
+                        largestLogoHref = "$site$largestLogoHref"
+                    }
+
+                    // prepend protocol and hostname if relative url.
+                    if (!largestLogoHref!!.startsWith("https://")) {
+                        largestLogoHref = "$site/$largestLogoHref"
+                    }
+
+                    loadImageFromNetwork(site, largestLogoHref!!, callback, error)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?, exception: Throwable?) {
+                if (exception == null) {
+                    // do nothing: site may not be a valid url.
+                } else {
+                    error.invoke(exception)
+                }
+
+            }
+
+        })
+    }
+
+    private fun loadImageFromNetwork(site: String, imageUrl: String, callback: (Bitmap) -> Unit, error: (Throwable) -> Unit) {
         val client = AsyncHttpClient()
 
-        client.addHeader("X-Mashape-Key", "")
-        val params = RequestParams()
-        params.add("site", site)
-
-        client.get(api, params, object : AsyncHttpResponseHandler() {
+        client.get(imageUrl, RequestParams(), object : AsyncHttpResponseHandler() {
 
             override fun onStart() {
             }
 
             override fun onSuccess(statusCode: Int, headers: Array<Header>, response: ByteArray) {
                 // should match the layout.
-                val dip = 46f
+                val dip = 96f
                 val r = context.resources
                 val px = TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP,
@@ -62,7 +126,7 @@ class FaviconLoader {
                 ).roundToInt()
 
                 // decode response into a bitmap and scale it.
-                var logo : Bitmap = BitmapFactory.decodeByteArray(response, 0, response.size)
+                var logo: Bitmap = BitmapFactory.decodeByteArray(response, 0, response.size)
                 logo = Bitmap.createScaledBitmap(logo, px, px, true)
 
                 // callback before writing to disk.
@@ -70,10 +134,9 @@ class FaviconLoader {
 
                 // compress to webp and store on disk.
                 val editor: DiskLruCache.Editor = cache.edit(site.hashCode().toString())
-                val out : OutputStream = editor.newOutputStream(0)
+                val out: OutputStream = editor.newOutputStream(0)
                 logo.compress(Bitmap.CompressFormat.WEBP, 100, out)
                 editor.commit()
-                Log.w("asd", "commit called: " + site.hashCode().toString())
             }
 
             override fun onFailure(statusCode: Int, headers: Array<Header>, errorResponse: ByteArray, e: Throwable) {

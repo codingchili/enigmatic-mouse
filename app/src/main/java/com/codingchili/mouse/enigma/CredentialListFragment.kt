@@ -52,7 +52,7 @@ class CredentialListFragment : Fragment() {
                     imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
                     imageView.setImageBitmap(bitmap)
                 }, { exception ->
-                    Toast.makeText(super.getContext(), exception.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(super.getContext(), exception.message, Toast.LENGTH_LONG).show()
                 })
 
                 view?.findViewById<TextView>(R.id.url)?.text = bank.retrieve()[position].url
@@ -64,7 +64,7 @@ class CredentialListFragment : Fragment() {
 
         list?.adapter = adapter
 
-        list?.setOnItemClickListener { _: AdapterView<*>?, view: View?, position: Int, _: Long ->
+        list?.setOnItemClickListener { _: AdapterView<*>?, _: View?, _: Int, _: Long ->
             // do something.
         }
     }
