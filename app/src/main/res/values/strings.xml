@@ -3,8 +3,8 @@
 
     <!-- application menu. -->
     <string name="menu_rate">Rate</string>
-    <string name="menu_feedback">Feedback</string>
     <string name="menu_info">Info</string>
+    <string name="clear_all_dev">Clear (dev option)</string>
     <string name="menu_logo_cache_clear">Reload logos</string>
     <string name="cache_cleared">Icon cache cleared.</string>
 

@@ -38,27 +38,31 @@ class MousePreferences(application: Application) {
         return preferences.getBoolean(TEE_GEN, false)
     }
 
-    fun setTeeIV(iv: ByteArray) {
+    fun setTeeIV(iv: ByteArray): MousePreferences {
         preferences.edit()
                 .putString(TEE_IV, Base64.getEncoder().encodeToString(iv))
                 .apply()
+        return this
     }
 
-    fun setMasterSalt(salt: ByteArray) {
+    fun setMasterSalt(salt: ByteArray): MousePreferences {
         preferences.edit()
                 .putString(MASTER_SALT, Base64.getEncoder().encodeToString(salt))
                 .apply()
+        return this
     }
 
-    fun setTeeGenerated() {
+    fun setTeeGenerated(): MousePreferences {
         preferences.edit()
                 .putBoolean(TEE_GEN, true)
                 .apply()
+        return this
     }
 
-    fun unsetTeeGenerated() {
+    fun unsetTeeGenerated(): MousePreferences {
         preferences.edit()
                 .putBoolean(TEE_GEN, false)
                 .apply()
+        return this
     }
 }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.codingchili.mouse.enigma.secret.CredentialBank
 import com.codingchili.mouse.enigma.secret.FaviconLoader
+import com.codingchili.mouse.enigma.secret.MousePreferences
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.navigation.NavigationView
 
@@ -34,6 +35,12 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
                             // failed to update icon..
                         })
                     }
+                }
+                R.id.clean_all_dev -> {
+                    MousePreferences(activity!!.application)
+                            .unsetTeeGenerated()
+
+                    activity?.finish()
                 }
             }
 

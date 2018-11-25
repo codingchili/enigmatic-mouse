@@ -32,7 +32,7 @@ class MasterSetupFragment : Fragment() {
 
         val preferences = MousePreferences(activity!!.application)
         val password = view.findViewById<TextInputEditText>(R.id.master_password)
-        val cipher : Cipher
+        val cipher: Cipher
         password.onEditorAction(EditorInfo.IME_ACTION_DONE)
 
         if (preferences.isTeeGenerated()) {
@@ -78,8 +78,8 @@ class MasterSetupFragment : Fragment() {
                             val encryptedKey = cipher.doFinal(spec.encoded)
 
                             preferences.setMasterSalt(salt)
-                            preferences.setTeeIV(cipher.iv)
-                            preferences.setTeeGenerated()
+                                    .setTeeIV(cipher.iv)
+                                    .setTeeGenerated()
 
                             Log.w("MasterSetupFragment", String(encryptedKey))
                         }
