@@ -5,7 +5,7 @@
     <string name="menu_rate">Rate</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_info">Info</string>
-    <string name="menu_cache_clear">Clear cache</string>
+    <string name="menu_logo_cache_clear">Reload logos</string>
 
     <!-- fragment: add credentials. -->
     <string name="password_generate_tap">Tap to generate a strong password</string>
@@ -25,4 +25,6 @@
     <string name="fp_subtitle">The fingerprint key is used to encrypt your master password.</string>
     <string name="fp_description">Your fingerprint is required to encrypt the master key.</string>
     <string name="fp_cancel">Cancel</string>
+    <string name="fp_authenticate">Scan fingerprint to unlock</string>
+    <string name="cache_cleared">Icon cache cleared.</string>
 </resources>

@@ -13,18 +13,23 @@ import javax.crypto.spec.IvParameterSpec
 /**
  * @author Robin Duda
  */
-class CredentialBank {
+object CredentialBank {
     private val keyGenerator: KeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
     private val keyStore: KeyStore = KeyStore.getInstance("AndroidKeyStore")
     private val keyName = "bank_mouse"
     private val list: ArrayList<Credential> = ArrayList()
     private val random = SecureRandom()
+    private val listeners = ArrayList<(Credential) -> Unit>()
 
-    private lateinit var teeIV : ByteArray
+    private lateinit var teeIV: ByteArray
 
     init {
         list.add(Credential("https://youtube.com/", "rduda@kth.se", "********"))
         list.add(Credential("https://google.com/", "rduda@kth.se", "********"))
+        list.add(Credential("https://linkedin.com/", "rduda@kth.se", "********"))
+        list.add(Credential("https://fortnite.com/", "rduda@kth.se", "********"))
+        list.add(Credential("https://outlook.com/", "rduda@kth.se", "********"))
+        list.add(Credential("https://reddit.com/", "rduda@kth.se", "********"))
     }
 
     fun setIv(teeIV: ByteArray) {
@@ -34,7 +39,7 @@ class CredentialBank {
     fun masterKey(encrypt: Boolean): Cipher {
         val cipher = Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
                 + KeyProperties.BLOCK_MODE_CBC + "/"
-                + KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                + KeyProperties.ENCRYPTION_PADDING_PKCS7, "AndroidKeyStoreBCWorkaround")
 
         keyStore.load(null)
 
@@ -96,15 +101,25 @@ class CredentialBank {
         val start = System.currentTimeMillis()
         val bytes = SCrypt.generate(secret, salt, 256, 32, 2, 16)
 
-        Log.w("CredentialsBank", "Generated KFF in " + (System.currentTimeMillis() - start) + "ms")
+        Log.w("CredentialsBank", "Generated derived key in " + (System.currentTimeMillis() - start) + "ms")
         return bytes
     }
 
     fun remove(credential: Credential) {
-        list.remove(credential);
+        list.remove(credential)
     }
 
     fun retrieve(): List<Credential> {
         return list
+    }
+
+    fun onChangeListener(callback: (Credential) -> Unit) {
+        listeners.add(callback)
+    }
+
+    fun onCacheUpdated(credential: Credential) {
+        listeners.forEach { callback ->
+            callback.invoke(credential)
+        }
     }
 }

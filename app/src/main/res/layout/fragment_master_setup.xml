@@ -35,7 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
             android:layout_marginTop="24dp"
-            android:layout_marginRight="12dp">
+            android:layout_marginRight="12dp"
+            android:visibility="visible">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/master_password"
@@ -50,8 +51,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
             android:layout_marginTop="32dp"
-            android:layout_marginBottom="48dp"
+            android:layout_marginBottom="64dp"
             android:text="@string/master_scan_fp_text"
             android:textAlignment="center" />
     </RelativeLayout>

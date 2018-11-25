@@ -5,22 +5,38 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.codingchili.mouse.enigma.secret.CredentialBank
+import com.codingchili.mouse.enigma.secret.FaviconLoader
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.navigation.NavigationView
 
 
-class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
+class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
+    private lateinit var icons: FaviconLoader
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        icons = FaviconLoader(context!!)
         val nav: NavigationView = view?.findViewById(R.id.navigation_view)!!
 
-        nav.setNavigationItemSelectedListener { menuItem ->
+        nav.setNavigationItemSelectedListener { item ->
 
-            // todo something on menu click :)
+            when (item.itemId) {
+                R.id.clear_logo_cache -> {
+                    icons.clear()
+                    Toast.makeText(activity?.applicationContext, getString(R.string.cache_cleared), Toast.LENGTH_SHORT).show()
 
-            Toast.makeText(activity?.applicationContext, "xxx", Toast.LENGTH_SHORT).show()
+                    CredentialBank.retrieve().forEach { credential ->
+                        icons.load(credential.url, { bitmap ->
+                            CredentialBank.onCacheUpdated(credential)
+                        }, { exception ->
+                            // failed to update icon..
+                        })
+                    }
+                }
+            }
+
             activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
             true
         }

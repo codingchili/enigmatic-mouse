@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--android:icon="@drawable/baseline_favorite_white_24"-->
     <item
         android:id="@+id/app_bar_fav"
         android:title="@string/menu_rate"
@@ -21,7 +20,7 @@
         app:showAsAction="never"/>
     <item
         android:id="@+id/clear_logo_cache"
-        android:title="@string/menu_cache_clear"
+        android:title="@string/menu_logo_cache_clear"
         android:icon="@drawable/baseline_delete_outline_24"
         app:showAsAction="never"/>
 </menu>

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import androidx.fragment.app.Fragment
 import com.codingchili.mouse.enigma.secret.CredentialBank
@@ -16,7 +17,6 @@ import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
 class MasterSetupFragment : Fragment() {
-    val bank = CredentialBank()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,20 +35,18 @@ class MasterSetupFragment : Fragment() {
         val cipher : Cipher
         password.onEditorAction(EditorInfo.IME_ACTION_DONE)
 
-        preferences.unsetTeeGenerated()
-
         if (preferences.isTeeGenerated()) {
-            // modify UI
             Log.w("MasterSetupFragment", String(preferences.getTeeIv()))
-            bank.setIv(preferences.getTeeIv())
+            CredentialBank.setIv(preferences.getTeeIv())
 
+            view.findViewById<TextView>(R.id.fp_header).text = getString(R.string.fp_authenticate)
             view.findViewById<View>(R.id.master_password).visibility = View.GONE
             view.findViewById<View>(R.id.master_password_header).visibility = View.GONE
-            cipher = bank.masterKey(false)
+            cipher = CredentialBank.masterKey(false)
         } else {
             Log.w("MasterSetupFragment", "NO tee GENERATED!")
-            bank.generateTEEKey()
-            cipher = bank.masterKey(true)
+            CredentialBank.generateTEEKey()
+            cipher = CredentialBank.masterKey(true)
         }
 
         val fingerprints: FingerprintManagerCompat = FingerprintManagerCompat.from(context!!)
@@ -71,8 +69,8 @@ class MasterSetupFragment : Fragment() {
                             // decrypt the key stored in the database some.. how..
                         } else {
                             // we use the KDF key to encrypt credentials.
-                            val salt = bank.generateSalt()
-                            val key = bank.generateKDFKey(password.text.toString().toByteArray(), salt)
+                            val salt = CredentialBank.generateSalt()
+                            val key = CredentialBank.generateKDFKey(password.text.toString().toByteArray(), salt)
                             val spec = SecretKeySpec(key, "AES")
 
                             // we use the fingerprint protected TEE key to decrypt the encrypted KDF key.

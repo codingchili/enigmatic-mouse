@@ -16,7 +16,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        Toast.makeText(applicationContext, "stack " + supportFragmentManager.backStackEntryCount, Toast.LENGTH_SHORT).show()
         if (supportFragmentManager?.backStackEntryCount!! > 1) {
             supportFragmentManager?.popBackStack()
         } else {

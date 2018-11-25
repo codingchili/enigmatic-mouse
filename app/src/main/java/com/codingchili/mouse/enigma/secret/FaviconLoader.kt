@@ -13,18 +13,26 @@ import cz.msebera.android.httpclient.Header
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.OutputStream
+import java.util.*
 import kotlin.math.roundToInt
 
 
 /**
  * Loads the favicon of the given url.
  */
+
+const val DP_SIZE = 96f
+
 class FaviconLoader {
-    private var cache: DiskLruCache
+    private lateinit var cache: DiskLruCache
     private val context: Context
 
     constructor(_context: Context) {
         context = _context
+        open()
+    }
+
+    private fun open() {
         cache = DiskLruCache.open(context.cacheDir, 3, 1, 512_000_000) // 64MB disk cache.
     }
 
@@ -49,11 +57,22 @@ class FaviconLoader {
      * Retrieves the image from the cache if the image is cached. If the image is not
      * cached then the callback is never called.
      */
-    fun get(site: String, callback: (Bitmap) -> Unit) {
+    fun get(site: String, callback: (Bitmap) -> Unit, error: () -> Unit) {
         val cached: DiskLruCache.Snapshot? = cache.get(site.hashCode().toString())
-        if (cached != null) {
+        if (cached == null) {
+            error.invoke()
+        } else {
             callback.invoke(BitmapFactory.decodeStream(cached.getInputStream(0)))
         }
+    }
+
+    /**
+     * Removes all entries in the cache.
+     */
+    fun clear() {
+        cache.delete()
+        open()
+
     }
 
     private fun loadIconReferences(site: String, callback: (Bitmap) -> Unit, error: (Throwable) -> Unit) {
@@ -81,7 +100,11 @@ class FaviconLoader {
                                 var size = 1
 
                                 if (element.hasAttr("sizes")) {
-                                    size = Integer.parseInt(element.attr("sizes").split("x")[0])
+                                    try {
+                                        size = Integer.parseInt(element.attr("sizes").split("x")[0])
+                                    } catch (exception: Exception) {
+                                        // there is an icon but without a parse-able size.
+                                    }
                                 }
 
                                 if (size > largestIconSize) {
@@ -131,6 +154,24 @@ class FaviconLoader {
         return url
     }
 
+    private fun decodeImageFromBytes(bytes: ByteArray, url: String): Optional<Bitmap> {
+        return if (url.endsWith(".svg")) {
+            // don't yet support .svg - just avoid crashing here.
+            /*val vector = VectorDrawableCompat.createFromStream(ByteArrayInputStream(bytes), "icon")
+            val bitmap = Bitmap.createBitmap(
+                    vector.intrinsicWidth,
+                    vector.intrinsicHeight,
+                    Bitmap.Config.ARGB_8888)
+
+            val canvas = Canvas(bitmap)
+            vector.setBounds(0, 0, canvas.width, canvas.height)
+            vector.draw(canvas)*/
+            Optional.empty()
+        } else {
+            Optional.of(BitmapFactory.decodeByteArray(bytes, 0, bytes.size))
+        }
+    }
+
     private fun loadImageFromNetwork(site: String, imageUrl: String, callback: (Bitmap) -> Unit, error: (Throwable) -> Unit) {
         val client = AsyncHttpClient()
 
@@ -140,27 +181,29 @@ class FaviconLoader {
             }
 
             override fun onSuccess(statusCode: Int, headers: Array<Header>, response: ByteArray) {
-                // should match the layout.
-                val dip = 96f
-                val r = context.resources
                 val px = TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP,
-                        dip,
-                        r.displayMetrics
+                        DP_SIZE,
+                        context.resources.displayMetrics
                 ).roundToInt()
 
-                // decode response into a bitmap and scale it.
-                var logo: Bitmap = BitmapFactory.decodeByteArray(response, 0, response.size)
-                logo = Bitmap.createScaledBitmap(logo, px, px, true)
+                decodeImageFromBytes(response, imageUrl).ifPresent { bitmap ->
+                    var logo = bitmap
 
-                // callback before writing to disk.
-                callback.invoke(logo)
+                    if (logo.width > px || logo.height > px) {
+                        // only rescale if the image is larger than required.
+                        logo = Bitmap.createScaledBitmap(logo, px, px, true)
+                    }
 
-                // compress to webp and store on disk.
-                val editor: DiskLruCache.Editor = cache.edit(site.hashCode().toString())
-                val out: OutputStream = editor.newOutputStream(0)
-                logo.compress(Bitmap.CompressFormat.WEBP, 100, out)
-                editor.commit()
+                    // callback before writing to disk.
+                    callback.invoke(logo)
+
+                    // compress to webp and store on disk.
+                    val editor: DiskLruCache.Editor = cache.edit(site.hashCode().toString())
+                    val out: OutputStream = editor.newOutputStream(0)
+                    logo.compress(Bitmap.CompressFormat.WEBP, 100, out)
+                    editor.commit()
+                }
             }
 
             override fun onFailure(statusCode: Int, headers: Array<Header>, errorResponse: ByteArray, e: Throwable) {

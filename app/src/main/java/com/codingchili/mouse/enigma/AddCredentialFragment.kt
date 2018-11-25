@@ -21,13 +21,7 @@ import android.text.TextWatcher
 
 
 internal class AddCredentialFragment: Fragment() {
-    private lateinit var bank: CredentialBank
     private val random : SecureRandom = SecureRandom()
-
-    fun setBank(bank: CredentialBank): AddCredentialFragment {
-        this.bank = bank
-        return this
-    }
 
     override fun onCreate(savedInstanceState:Bundle?){
         super.onCreate(savedInstanceState)
@@ -97,7 +91,7 @@ internal class AddCredentialFragment: Fragment() {
 
             website = toUrl(website)
 
-            bank.store(Credential(website, username, password))
+            CredentialBank.store(Credential(website, username, password))
             Toast.makeText(super.getContext(), "credentials saved.", Toast.LENGTH_SHORT).show()
             activity?.supportFragmentManager?.popBackStack()
         }
