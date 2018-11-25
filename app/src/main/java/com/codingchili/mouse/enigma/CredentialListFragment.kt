@@ -69,8 +69,14 @@ class CredentialListFragment : Fragment() {
 
         list?.adapter = adapter
 
-        list?.setOnItemClickListener { _: AdapterView<*>?, _: View?, _: Int, _: Long ->
-            // do something.
+        list?.setOnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
+            val credential = CredentialBank.retrieve()[position]
+
+            activity?.supportFragmentManager?.beginTransaction()
+                    ?.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.fade_out)
+                    ?.replace(R.id.root, CredentialInfoFragment().setCredential(credential))
+                    ?.addToBackStack("info")
+                    ?.commit()
         }
     }
 

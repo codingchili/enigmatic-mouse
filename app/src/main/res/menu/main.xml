@@ -21,6 +21,6 @@
     <item
         android:id="@+id/clear_logo_cache"
         android:title="@string/menu_logo_cache_clear"
-        android:icon="@drawable/baseline_delete_outline_24"
+        android:icon="@drawable/baseline_sync_24"
         app:showAsAction="never"/>
 </menu>
