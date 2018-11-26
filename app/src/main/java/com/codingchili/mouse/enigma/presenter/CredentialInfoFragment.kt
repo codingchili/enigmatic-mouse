@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import com.codingchili.mouse.enigma.R
 import com.codingchili.mouse.enigma.model.Credential
 import com.codingchili.mouse.enigma.model.FaviconLoader
+import com.codingchili.mouse.enigma.model.MousePreferences
 
 
 /**
@@ -48,11 +49,20 @@ class CredentialInfoFragment: Fragment() {
         }
 
         view.findViewById<View>(R.id.password_copy).setOnClickListener {
-            copyToClipboard(credential.password) // todo: expire clipboard?
+            val preferences = MousePreferences(activity!!.application)
+
+            if (preferences.isClipboardWarningShown()) {
+                copyToClipboard(credential.password) // todo: expire clipboard?
+            } else {
+                FragmentSelector.clipboardWarningDialog {
+                    copyToClipboard(credential.password)
+                    preferences.setClipboardWarned()
+                }
+            }
         }
 
         view.findViewById<View>(R.id.remove).setOnClickListener {
-            FragmentSelector.removeCredential(credential)
+            FragmentSelector.removeCredentialDialog(credential)
         }
 
         view.findViewById<View>(R.id.password_show).setOnClickListener {

@@ -3,7 +3,7 @@ The enigmatic mouse will keep your passwords safe - password manager on Android 
 
 ![mouse enigma preview](https://raw.githubusercontent.com/codingchili/enigmatic-mouse/master/preview.jpg "Current snapshot version")
 
-Password manager in 800 lines of KOTLIN!
+Password manager in 1000 lines of KOTLIN!
 
 - Scrypt
 - Realm

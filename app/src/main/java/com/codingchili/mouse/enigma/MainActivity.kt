@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        FragmentSelector.init(supportFragmentManager)
+        FragmentSelector.init(this)
         FragmentSelector.master()
     }
 }

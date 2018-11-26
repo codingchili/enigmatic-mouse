@@ -5,10 +5,11 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import java.util.*
 
-private const val TEE_GEN : String = "TEE_GEN"
-private const val TEE_IV : String = "TEE_IV"
-private const val MASTER_SALT : String = "MASTER_SALT"
-private const val MASTER_KEY : String = "MASTER_KEY"
+private const val TEE_GEN = "TEE_GEN"
+private const val TEE_IV = "TEE_IV"
+private const val MASTER_SALT = "MASTER_SALT"
+private const val MASTER_KEY = "MASTER_KEY"
+private const val CLIPBOARD_WARNING = "CLIPBOARD_WARNING"
 private const val fileName = "mouse.prefs"
 
 class MousePreferences(application: Application) {
@@ -47,6 +48,17 @@ class MousePreferences(application: Application) {
         } else {
             return Base64.getDecoder().decode(key)
         }
+    }
+
+    fun isClipboardWarningShown(): Boolean {
+        return preferences.getBoolean(CLIPBOARD_WARNING, false)
+    }
+
+    fun setClipboardWarned(): MousePreferences {
+        preferences.edit()
+                .putBoolean(CLIPBOARD_WARNING, true)
+                .apply()
+        return this
     }
 
     fun setTeeIV(iv: ByteArray): MousePreferences {

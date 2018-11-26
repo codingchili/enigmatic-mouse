@@ -4,37 +4,58 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.codingchili.mouse.enigma.R
 import com.codingchili.mouse.enigma.model.Credential
-import com.codingchili.mouse.enigma.model.CredentialBank
 
 /**
  * Dialog to delete a credential.
  */
-class DeleteCredentialFragment : DialogFragment() {
+class DialogDelayedPositiveButton : DialogFragment() {
     private val actionBlockMS = 4000L
     private lateinit var credential: Credential
+    private var positiveText : Int = 0
+    private var negativeText: Int = 0
+    private var message: Int = 0
+    private lateinit var negativeHandler: () -> Unit
+    private lateinit var positiveHandler: () -> Unit
 
-    fun setCredential(credential: Credential): DeleteCredentialFragment {
-        this.credential = credential
+    fun setMessage(res: Int): DialogDelayedPositiveButton {
+        this.message = res
+        return this
+    }
+
+    fun setPositiveText(res: Int): DialogDelayedPositiveButton {
+        this.positiveText = res
+        return this
+    }
+
+    fun setNegativeText(res: Int): DialogDelayedPositiveButton {
+        this.negativeText = res
+        return this
+    }
+
+    fun setNegativeHandler(callback: () -> Unit): DialogDelayedPositiveButton {
+        this.negativeHandler = callback
+        return this
+    }
+
+    fun setPositiveHandler(callback: () -> Unit): DialogDelayedPositiveButton {
+        this.positiveHandler = callback
         return this
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let { context ->
             val builder = AlertDialog.Builder(context)
-                    .setMessage(R.string.delete_credential)
-                    .setPositiveButton(R.string.delete_ok) { _, _ ->
-                        CredentialBank.remove(credential)
-                        FragmentSelector.back()
-
-                        val text = "${getString(R.string.removed_toaster)} ${credential.username}@${credential.site}"
-                        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+                    .setMessage(message)
+                    .setPositiveButton(positiveText) { _, _ ->
+                        positiveHandler.invoke()
                     }
-                    .setNegativeButton(R.string.delete_cancel) { _, _ -> }
+                    .setNegativeButton(negativeText) { _, _ ->
+                        negativeHandler.invoke()
+                    }
 
             val dialog = builder.create()
             dialog.setOnShowListener {
