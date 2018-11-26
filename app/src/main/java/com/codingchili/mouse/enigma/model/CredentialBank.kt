@@ -22,12 +22,17 @@ import javax.crypto.spec.SecretKeySpec
 object CredentialBank {
     private const val KEY_NAME = "bank_mouse"
     private const val KEYSTORE = "AndroidKeyStore"
+    private const val ITERATIONS = 1024
+    private const val SALT_BYTES = 32
+    private const val KDF_OUTPUT_BITS = 512
+    private const val REALM_SCHEMA_VERSION = 6L
+    private const val REALM_NAME = "credentials_$REALM_SCHEMA_VERSION" // skip migration support for now.
 
     private val keyGenerator: KeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE)
     private val keyStore: KeyStore = KeyStore.getInstance(KEYSTORE)
-    private val list: ArrayList<Credential> = ArrayList()
-    private val random = SecureRandom()
     private val listeners = ArrayList<() -> Unit>()
+    private val random = SecureRandom()
+    private var list: MutableList<Credential> = ArrayList()
 
     private lateinit var cipher: Cipher
     private lateinit var preferences: MousePreferences
@@ -50,20 +55,23 @@ object CredentialBank {
     }
 
     fun store(credential: Credential) {
+        list.remove(credential)
         list.add(credential)
 
         // realms are cached so we can look it up here android warns when set as a member field.
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
-        realm.copyToRealm(credential)
+        realm.copyToRealmOrUpdate(credential)
         realm.commitTransaction()
         realm.close()
 
-        list.sortBy { it.site }
+        list = list.asSequence()
+                .sortedWith(compareBy({ !it.favorite }, { it.site }))
+                .toMutableList()
     }
 
     private fun generateSalt(): ByteArray {
-        val salt = ByteArray(32)
+        val salt = ByteArray(SALT_BYTES)
         random.nextBytes(salt)
         return salt
     }
@@ -84,9 +92,9 @@ object CredentialBank {
 
     private fun generateKDFKey(secret: ByteArray, salt: ByteArray): ByteArray {
         val start = System.currentTimeMillis()
-        val bytes = SCrypt.generate(secret, salt, 512, 32, 2, 64)
+        val bytes = SCrypt.generate(secret, salt, ITERATIONS, 32, 2, KDF_OUTPUT_BITS)
 
-        Log.w("CredentialsBank", "Generated derived key in " + (System.currentTimeMillis() - start) + "ms")
+        Log.w(javaClass.name, "Generated derived key in " + (System.currentTimeMillis() - start) + "ms")
         return bytes
     }
 
@@ -114,17 +122,15 @@ object CredentialBank {
     }
 
     private fun configureRealm(key: ByteArray) {
-        val config = RealmConfiguration.Builder()
+        Realm.setDefaultConfiguration(RealmConfiguration.Builder()
                 .encryptionKey(key)
-                .schemaVersion(1)
-                .name("credentials")
-                .build()
-
-        Realm.setDefaultConfiguration(config)
+                .schemaVersion(REALM_SCHEMA_VERSION)
+                .name(REALM_NAME)
+                .build())
 
         list.clear()
 
-        // make sure the key is valid.
+        // todo: implement migration here.
         val realm = Realm.getDefaultInstance()
         realm.where(Credential::class.java).findAll().forEach { credential ->
             list.add(realm.copyFromRealm(credential))
@@ -153,9 +159,9 @@ object CredentialBank {
     fun uninstall() {
         preferences.unsetTeeGenerated()
         try {
-            Realm.deleteRealm(RealmConfiguration.Builder().name("credentials").build())
+            Realm.deleteRealm(RealmConfiguration.Builder().name(REALM_NAME).build())
         } catch (e: Exception) {
-            Log.w("CredentialBank", e.message)
+            Log.w(javaClass.name, e.message)
         }
     }
 }

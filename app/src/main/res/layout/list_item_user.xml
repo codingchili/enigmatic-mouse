@@ -42,8 +42,9 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_marginEnd="48dp"
         android:orientation="vertical">
 
         <TextView
@@ -52,6 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:text="@string/hint_username"
             android:textAppearance="?attr/textAppearanceListItem" />
 
         <TextView
@@ -60,8 +62,30 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:text="website.com"
             android:textAppearance="?attr/textAppearanceListItemSecondary"
             android:textSize="12sp" />
+
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/icon_group"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/favorite_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:visibility="visible"
+            android:tint="@color/accent"
+            app:srcCompat="@drawable/ic_baseline_star_rate_18" />
+
+    </RelativeLayout>
+
 
 </LinearLayout>

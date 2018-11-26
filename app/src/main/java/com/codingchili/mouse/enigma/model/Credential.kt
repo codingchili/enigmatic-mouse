@@ -20,15 +20,18 @@ open class Credential(): RealmObject() {
     }
 
     @PrimaryKey
-    var id: String = ""
+    var id: String = UUID.randomUUID().toString()
     var created : String = ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE)
     var site: String = ""
     var username: String = ""
     var password: String = ""
+    var favorite: Boolean = false
 
-    companion object {
-        fun getPrimaryKey() : String {
-            return UUID.randomUUID().toString()
-        }
+    override fun equals(other: Any?): Boolean {
+        return other != null && id == (other as Credential).id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
     }
 }
