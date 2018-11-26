@@ -12,7 +12,7 @@
         android:layout_centerVertical="true">
 
         <ImageView
-            android:id="@+id/fp_tap"
+            android:id="@+id/fp_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_below="@+id/master_password_header"

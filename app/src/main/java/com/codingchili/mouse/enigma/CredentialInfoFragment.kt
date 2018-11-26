@@ -36,7 +36,7 @@ class CredentialInfoFragment: Fragment() {
 
         view.findViewById<View>(R.id.open_website).setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(credential.url)
+            intent.data = Uri.parse(credential.site)
             startActivity(intent)
         }
 
@@ -53,11 +53,11 @@ class CredentialInfoFragment: Fragment() {
             Toast.makeText(context, credential.password, Toast.LENGTH_SHORT).show()
         }
 
-        view.findViewById<TextView>(R.id.created_at_date).text = credential.created.format(DateTimeFormatter.ISO_DATE)
+        view.findViewById<TextView>(R.id.created_at_date).text = credential.created
         view.findViewById<TextView>(R.id.username).text = credential.username
-        view.findViewById<TextView>(R.id.website).text = credential.url
+        view.findViewById<TextView>(R.id.website).text = credential.site
 
-        FaviconLoader(activity!!.applicationContext).get(credential.url, { bitmap ->
+        FaviconLoader(activity!!.applicationContext).get(credential.site, { bitmap ->
             view.findViewById<ImageView>(R.id.logo).setImageBitmap(bitmap)
         }, {
             // no image available.

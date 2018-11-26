@@ -34,4 +34,5 @@
     <string name="clipboard_failed">Failed to copy to clipboard</string>
     <string name="clipboard_success">Copied to clipboard</string>
     <string name="info_close">Close</string>
+    <string name="fp_authenticate_fail">Failed to verify, try again.</string>
 </resources>

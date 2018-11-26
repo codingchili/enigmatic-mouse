@@ -8,6 +8,7 @@ import java.util.*
 private const val TEE_GEN : String = "TEE_GEN"
 private const val TEE_IV : String = "TEE_IV"
 private const val MASTER_SALT : String = "MASTER_SALT"
+private const val MASTER_KEY : String = "MASTER_KEY"
 private const val fileName = "mouse.prefs"
 
 class MousePreferences(application: Application) {
@@ -38,6 +39,16 @@ class MousePreferences(application: Application) {
         return preferences.getBoolean(TEE_GEN, false)
     }
 
+    fun getEncryptedMaster(): ByteArray {
+        val key: String = preferences.getString(MASTER_KEY, "")!!
+
+        if (key.isBlank()) {
+            throw Error("No master key in shared prefs.")
+        } else {
+            return Base64.getDecoder().decode(key)
+        }
+    }
+
     fun setTeeIV(iv: ByteArray): MousePreferences {
         preferences.edit()
                 .putString(TEE_IV, Base64.getEncoder().encodeToString(iv))
@@ -62,6 +73,13 @@ class MousePreferences(application: Application) {
     fun unsetTeeGenerated(): MousePreferences {
         preferences.edit()
                 .putBoolean(TEE_GEN, false)
+                .apply()
+        return this
+    }
+
+    fun setEncryptedMaster(encryptedKey: ByteArray): MousePreferences {
+        preferences.edit()
+                .putString(MASTER_KEY, Base64.getEncoder().encodeToString(encryptedKey))
                 .apply()
         return this
     }

@@ -48,7 +48,7 @@ class CredentialListFragment : Fragment() {
 
                 val imageView: ImageView = view?.findViewById(R.id.site_logo) as ImageView
 
-                FaviconLoader(context).get(CredentialBank.retrieve()[position].url, { bitmap ->
+                FaviconLoader(context).get(CredentialBank.retrieve()[position].site, { bitmap ->
                     //imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
                     imageView.setImageBitmap(bitmap)
                 }, {
@@ -56,7 +56,7 @@ class CredentialListFragment : Fragment() {
                     imageView.setImageDrawable(null)
                 })
 
-                view.findViewById<TextView>(R.id.url)?.text = CredentialBank.retrieve()[position].url
+                view.findViewById<TextView>(R.id.url)?.text = CredentialBank.retrieve()[position].site
                 view.findViewById<TextView>(R.id.username)?.text = CredentialBank.retrieve()[position].username
 
                 return view

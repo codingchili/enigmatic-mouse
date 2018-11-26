@@ -30,7 +30,7 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
                     Toast.makeText(activity?.applicationContext, getString(R.string.cache_cleared), Toast.LENGTH_SHORT).show()
 
                     CredentialBank.retrieve().forEach { credential ->
-                        icons.load(credential.url, { _ ->
+                        icons.load(credential.site, { _ ->
                             CredentialBank.onCacheUpdated()
                         }, { _ ->
                             // failed to update icon..
