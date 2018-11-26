@@ -54,9 +54,9 @@ class MousePreferences(application: Application) {
         return preferences.getBoolean(CLIPBOARD_WARNING, false)
     }
 
-    fun setClipboardWarned(): MousePreferences {
+    fun setClipboardWarned(isWarned: Boolean): MousePreferences {
         preferences.edit()
-                .putBoolean(CLIPBOARD_WARNING, true)
+                .putBoolean(CLIPBOARD_WARNING, isWarned)
                 .apply()
         return this
     }

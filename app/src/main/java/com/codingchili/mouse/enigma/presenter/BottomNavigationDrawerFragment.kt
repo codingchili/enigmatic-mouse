@@ -8,6 +8,7 @@ import android.widget.Toast
 import com.codingchili.mouse.enigma.R
 import com.codingchili.mouse.enigma.model.CredentialBank
 import com.codingchili.mouse.enigma.model.FaviconLoader
+import com.codingchili.mouse.enigma.model.MousePreferences
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.navigation.NavigationView
 

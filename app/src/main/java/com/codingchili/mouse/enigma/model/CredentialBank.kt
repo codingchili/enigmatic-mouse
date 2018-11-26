@@ -177,6 +177,7 @@ object CredentialBank {
 
     fun uninstall() {
         preferences.unsetTeeGenerated()
+        preferences.setClipboardWarned(false)
         try {
             Realm.deleteRealm(RealmConfiguration.Builder().name(REALM_NAME).build())
         } catch (e: Exception) {
