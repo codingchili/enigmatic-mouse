@@ -56,7 +56,7 @@ class CredentialInfoFragment: Fragment() {
             } else {
                 FragmentSelector.clipboardWarningDialog {
                     copyToClipboard(credential.password)
-                    preferences.setClipboardWarned()
+                    preferences.setClipboardWarned(true)
                 }
             }
         }
