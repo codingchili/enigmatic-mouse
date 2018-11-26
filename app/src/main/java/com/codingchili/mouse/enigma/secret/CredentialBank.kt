@@ -19,17 +19,17 @@ object CredentialBank {
     private val keyName = "bank_mouse"
     private val list: ArrayList<Credential> = ArrayList()
     private val random = SecureRandom()
-    private val listeners = ArrayList<(Credential) -> Unit>()
+    private val listeners = ArrayList<() -> Unit>()
 
     private lateinit var teeIV: ByteArray
 
     init {
-        list.add(Credential("https://youtube.com/", "rduda@kth.se", "********"))
-        list.add(Credential("https://google.com/", "rduda@kth.se", "********"))
-        list.add(Credential("https://linkedin.com/", "rduda@kth.se", "********"))
-        list.add(Credential("https://fortnite.com/", "rduda@kth.se", "********"))
-        list.add(Credential("https://outlook.com/", "rduda@kth.se", "********"))
-        list.add(Credential("https://reddit.com/", "rduda@kth.se", "********"))
+        list.add(Credential("youtube.com", "rduda@kth.se", "********"))
+        list.add(Credential("google.com", "rduda@kth.se", "********"))
+        list.add(Credential("linkedin.com", "rduda@kth.se", "********"))
+        list.add(Credential("fortnite.com", "rduda@kth.se", "********"))
+        list.add(Credential("outlook.com", "rduda@kth.se", "********"))
+        list.add(Credential("reddit.com", "rduda@kth.se", "********"))
     }
 
     fun setIv(teeIV: ByteArray) {
@@ -113,13 +113,13 @@ object CredentialBank {
         return list
     }
 
-    fun onChangeListener(callback: (Credential) -> Unit) {
+    fun onChangeListener(callback: () -> Unit) {
         listeners.add(callback)
     }
 
-    fun onCacheUpdated(credential: Credential) {
+    fun onCacheUpdated() {
         listeners.forEach { callback ->
-            callback.invoke(credential)
+            callback.invoke()
         }
     }
 }

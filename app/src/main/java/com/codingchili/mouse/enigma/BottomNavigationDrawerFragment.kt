@@ -26,12 +26,13 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
             when (item.itemId) {
                 R.id.clear_logo_cache -> {
                     icons.clear()
+                    CredentialBank.onCacheUpdated()
                     Toast.makeText(activity?.applicationContext, getString(R.string.cache_cleared), Toast.LENGTH_SHORT).show()
 
                     CredentialBank.retrieve().forEach { credential ->
-                        icons.load(credential.url, { bitmap ->
-                            CredentialBank.onCacheUpdated(credential)
-                        }, { exception ->
+                        icons.load(credential.url, { _ ->
+                            CredentialBank.onCacheUpdated()
+                        }, { _ ->
                             // failed to update icon..
                         })
                     }

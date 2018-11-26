@@ -46,10 +46,10 @@ internal class AddCredentialFragment: Fragment() {
             if (!hasFocus) {
                 val edit : TextInputEditText = v as TextInputEditText
 
-                FaviconLoader(context!!).load(toUrl(edit.text.toString()), { bitmap ->
+                FaviconLoader(context!!).load(edit.text.toString(), { bitmap ->
                     view.findViewById<ImageView>(R.id.logo).setImageBitmap(bitmap)
                 }, { exception ->
-                    Log.w("AddCredentialFragment", exception.message)
+                    Log.w("AddCredentialFragment", exception?.message)
                 })
             }
         }
@@ -89,7 +89,7 @@ internal class AddCredentialFragment: Fragment() {
             val username : String = view.findViewById<TextInputEditText>(R.id.username).text.toString()
             val password : String = view.findViewById<TextInputEditText>(R.id.password).text.toString()
 
-            website = toUrl(website)
+            website = website.replace(Regex("https://|http://"), "")
 
             CredentialBank.store(Credential(website, username, password))
             Toast.makeText(super.getContext(), "credentials saved.", Toast.LENGTH_SHORT).show()
@@ -118,14 +118,5 @@ internal class AddCredentialFragment: Fragment() {
         }
         return builder.toString()
     }
-
-    private fun toUrl(hostname: String): String {
-        return if (!hostname.startsWith("http")) {
-            "https://$hostname/"
-        } else {
-            hostname
-        }
-    }
-
 }
 
