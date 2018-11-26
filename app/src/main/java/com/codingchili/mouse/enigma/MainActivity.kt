@@ -1,10 +1,9 @@
 package com.codingchili.mouse.enigma
 
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import io.realm.Realm
+import com.codingchili.mouse.enigma.presenter.FragmentSelector
+import com.codingchili.mouse.enigma.presenter.MasterSetupFragment
 import java.security.Security
 
 
@@ -17,8 +16,9 @@ class MainActivity : AppCompatActivity() {
         Security.insertProviderAt(org.spongycastle.jce.provider.BouncyCastleProvider(), 1)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onResume() {
+        FragmentSelector.master()
+        super.onResume()
     }
 
     override fun onBackPressed() {
@@ -33,9 +33,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportFragmentManager.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .add(R.id.root, MasterSetupFragment())
-                .commit()
+        FragmentSelector.init(supportFragmentManager)
+        FragmentSelector.master()
     }
 }

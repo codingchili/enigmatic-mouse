@@ -1,4 +1,4 @@
-package com.codingchili.mouse.enigma.secret
+package com.codingchili.mouse.enigma.model
 
 import android.app.Application
 import android.content.Context.MODE_PRIVATE

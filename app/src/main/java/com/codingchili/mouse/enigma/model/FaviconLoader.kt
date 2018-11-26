@@ -1,4 +1,4 @@
-package com.codingchili.mouse.enigma.secret
+package com.codingchili.mouse.enigma.model
 
 import android.content.Context
 import android.graphics.Bitmap

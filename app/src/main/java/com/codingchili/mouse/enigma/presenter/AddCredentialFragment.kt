@@ -1,4 +1,4 @@
-package com.codingchili.mouse.enigma
+package com.codingchili.mouse.enigma.presenter
 
 import android.os.Bundle
 import android.util.Log
@@ -8,16 +8,16 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.codingchili.mouse.enigma.secret.Credential
-import com.codingchili.mouse.enigma.secret.CredentialBank
-import com.codingchili.mouse.enigma.secret.FaviconLoader
+import com.codingchili.mouse.enigma.model.Credential
+import com.codingchili.mouse.enigma.model.CredentialBank
+import com.codingchili.mouse.enigma.model.FaviconLoader
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import org.spongycastle.util.encoders.Hex
 import java.security.SecureRandom
 import android.text.Editable
 import android.text.TextWatcher
-
+import com.codingchili.mouse.enigma.R
 
 
 internal class AddCredentialFragment: Fragment() {
@@ -33,7 +33,7 @@ internal class AddCredentialFragment: Fragment() {
 
         view.findViewById<FloatingActionButton>(R.id.cancel).setOnClickListener {
             Toast.makeText(context, "cancelled", Toast.LENGTH_SHORT).show()
-            activity?.supportFragmentManager?.popBackStack()
+            FragmentSelector.back()
         }
 
         view.findViewById<ImageView>(R.id.generate).setOnClickListener {
@@ -93,7 +93,7 @@ internal class AddCredentialFragment: Fragment() {
 
             CredentialBank.store(Credential(website, username, password))
             Toast.makeText(super.getContext(), "credentials saved.", Toast.LENGTH_SHORT).show()
-            activity?.supportFragmentManager?.popBackStack()
+            FragmentSelector.back()
         }
 
         return view

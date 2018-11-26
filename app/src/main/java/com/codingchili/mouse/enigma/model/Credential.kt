@@ -1,4 +1,4 @@
-package com.codingchili.mouse.enigma.secret
+package com.codingchili.mouse.enigma.model
 
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey

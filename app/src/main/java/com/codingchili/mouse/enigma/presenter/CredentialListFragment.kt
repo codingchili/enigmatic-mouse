@@ -1,16 +1,16 @@
-package com.codingchili.mouse.enigma
+package com.codingchili.mouse.enigma.presenter
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import com.codingchili.mouse.enigma.secret.Credential
-import com.codingchili.mouse.enigma.secret.CredentialBank
-import com.codingchili.mouse.enigma.secret.FaviconLoader
+import com.codingchili.mouse.enigma.R
+import com.codingchili.mouse.enigma.model.Credential
+import com.codingchili.mouse.enigma.model.CredentialBank
+import com.codingchili.mouse.enigma.model.FaviconLoader
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class CredentialListFragment : Fragment() {
@@ -27,14 +27,8 @@ class CredentialListFragment : Fragment() {
         val button = view.findViewById<FloatingActionButton>(R.id.add_pw)
 
         button.setOnClickListener {
-
             view.findViewById<FloatingActionButton>(R.id.add_pw).setImageResource(R.drawable.add_icon_simple)
-
-            activity?.supportFragmentManager?.beginTransaction()
-                    ?.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.fade_out)
-                    ?.replace(R.id.root, AddCredentialFragment())
-                    ?.addToBackStack("add")
-                    ?.commit()
+            FragmentSelector.addCredential()
         }
 
         val list = view.findViewById<ListView>(R.id.list_pw)
@@ -49,7 +43,6 @@ class CredentialListFragment : Fragment() {
                 val imageView: ImageView = view?.findViewById(R.id.site_logo) as ImageView
 
                 FaviconLoader(context).get(CredentialBank.retrieve()[position].site, { bitmap ->
-                    //imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
                     imageView.setImageBitmap(bitmap)
                 }, {
                     // image not loaded to cache - unload current.
@@ -70,13 +63,7 @@ class CredentialListFragment : Fragment() {
         list?.adapter = adapter
 
         list?.setOnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            val credential = CredentialBank.retrieve()[position]
-
-            activity?.supportFragmentManager?.beginTransaction()
-                    ?.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.fade_out)
-                    ?.replace(R.id.root, CredentialInfoFragment().setCredential(credential))
-                    ?.addToBackStack("info")
-                    ?.commit()
+            FragmentSelector.credentialInfo(CredentialBank.retrieve()[position])
         }
     }
 

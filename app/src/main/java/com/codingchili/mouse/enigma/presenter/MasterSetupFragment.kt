@@ -1,7 +1,6 @@
-package com.codingchili.mouse.enigma
+package com.codingchili.mouse.enigma.presenter
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,9 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import androidx.fragment.app.Fragment
-import com.codingchili.mouse.enigma.secret.CredentialBank
-import com.codingchili.mouse.enigma.secret.MousePreferences
+import com.codingchili.mouse.enigma.R
+import com.codingchili.mouse.enigma.model.CredentialBank
+import com.codingchili.mouse.enigma.model.MousePreferences
 import com.google.android.material.textfield.TextInputEditText
 import io.realm.Realm
 
@@ -37,9 +37,6 @@ class MasterSetupFragment : Fragment() {
 
         CredentialBank.setPreferences(preferences)
 
-        // dev
-        //CredentialBank.uninstall()
-
         if (preferences.isTeeGenerated()) {
             view.findViewById<TextView>(R.id.fp_header).text = getString(R.string.fp_authenticate)
             view.findViewById<View>(R.id.master_password).visibility = View.GONE
@@ -58,7 +55,7 @@ class MasterSetupFragment : Fragment() {
                 object : FingerprintManagerCompat.AuthenticationCallback() {
 
                     override fun onAuthenticationError(errMsgId: Int, errString: CharSequence?) {
-                        onAuthenticationFailed()
+                        //onAuthenticationFailed()
                     }
 
                     override fun onAuthenticationSucceeded(result: FingerprintManagerCompat.AuthenticationResult?) {
@@ -69,12 +66,7 @@ class MasterSetupFragment : Fragment() {
                         } else {
                             CredentialBank.install(password.text.toString())
                         }
-
-                        fragmentManager?.beginTransaction()
-                                ?.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                                ?.replace(R.id.root, CredentialListFragment())
-                                ?.addToBackStack("list")
-                                ?.commit()
+                        FragmentSelector.list()
                     }
 
                     override fun onAuthenticationFailed() {

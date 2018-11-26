@@ -1,13 +1,13 @@
-package com.codingchili.mouse.enigma
+package com.codingchili.mouse.enigma.presenter
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.codingchili.mouse.enigma.secret.CredentialBank
-import com.codingchili.mouse.enigma.secret.FaviconLoader
-import com.codingchili.mouse.enigma.secret.MousePreferences
+import com.codingchili.mouse.enigma.R
+import com.codingchili.mouse.enigma.model.CredentialBank
+import com.codingchili.mouse.enigma.model.FaviconLoader
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.navigation.NavigationView
 
@@ -38,14 +38,12 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
                     }
                 }
                 R.id.clean_all_dev -> {
-                    MousePreferences(activity!!.application)
-                            .unsetTeeGenerated()
-
+                    CredentialBank.uninstall()
                     activity?.finish()
                 }
             }
 
-            activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
+            FragmentSelector.remove(this)
             true
         }
     }

@@ -1,4 +1,4 @@
-package com.codingchili.mouse.enigma
+package com.codingchili.mouse.enigma.presenter
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -13,9 +13,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.codingchili.mouse.enigma.secret.Credential
-import com.codingchili.mouse.enigma.secret.FaviconLoader
-import java.time.format.DateTimeFormatter
+import com.codingchili.mouse.enigma.R
+import com.codingchili.mouse.enigma.model.Credential
+import com.codingchili.mouse.enigma.model.FaviconLoader
 
 
 class CredentialInfoFragment: Fragment() {
