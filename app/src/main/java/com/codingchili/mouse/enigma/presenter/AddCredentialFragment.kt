@@ -20,6 +20,11 @@ import android.text.TextWatcher
 import com.codingchili.mouse.enigma.R
 
 
+/**
+ * @author Robin Duda
+ *
+ * Fragment for adding new credentials.
+ */
 internal class AddCredentialFragment: Fragment() {
     private val random : SecureRandom = SecureRandom()
 
@@ -95,7 +100,6 @@ internal class AddCredentialFragment: Fragment() {
             Toast.makeText(super.getContext(), "credentials saved.", Toast.LENGTH_SHORT).show()
             FragmentSelector.back()
         }
-
         return view
     }
 
@@ -119,4 +123,3 @@ internal class AddCredentialFragment: Fragment() {
         return builder.toString()
     }
 }
-

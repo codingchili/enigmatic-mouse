@@ -12,6 +12,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.navigation.NavigationView
 
 
+/**
+ * @author Robin Duda
+ *
+ * Fragment for the application menu.
+ */
 class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
     private lateinit var icons: FaviconLoader
 
@@ -22,7 +27,6 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
         val nav: NavigationView = view?.findViewById(R.id.navigation_view)!!
 
         nav.setNavigationItemSelectedListener { item ->
-
             when (item.itemId) {
                 R.id.clear_logo_cache -> {
                     icons.clear()
@@ -32,9 +36,7 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
                     CredentialBank.retrieve().forEach { credential ->
                         icons.load(credential.site, { _ ->
                             CredentialBank.onCacheUpdated()
-                        }, { _ ->
-                            // failed to update icon..
-                        })
+                        }, { _ ->  }) // failed to update icon..
                     }
                 }
                 R.id.clean_all_dev -> {
@@ -42,7 +44,6 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
                     activity?.finish()
                 }
             }
-
             FragmentSelector.remove(this)
             true
         }

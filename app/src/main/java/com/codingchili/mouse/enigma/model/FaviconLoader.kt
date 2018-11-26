@@ -18,17 +18,18 @@ import kotlin.math.roundToInt
 
 
 /**
+ * @author Robin Duda
+ *
  * Loads the favicon of the given url.
  */
 
-const val DP_SIZE = 96f
+const val DP_SIZE = 96f // matches the maximum size we display in the UI.
 
-class FaviconLoader {
+class FaviconLoader(_context: Context) {
     private lateinit var cache: DiskLruCache
-    private val context: Context
+    private val context: Context = _context
 
-    constructor(_context: Context) {
-        context = _context
+    init {
         open()
     }
 
@@ -113,7 +114,6 @@ class FaviconLoader {
                                 }
                             }
                         }
-
                         Log.w("FaviconLoader", "biggest logo chosen from $largestLogoHref size was $largestIconSize")
                         loadImageFromNetwork(site, makeResourceUrl(site, largestLogoHref), callback, error)
                     }
@@ -125,9 +125,7 @@ class FaviconLoader {
                     } else {
                         error.invoke(exception)
                     }
-
                 }
-
             })
         } catch (e: Exception) {
             error.invoke(e)
@@ -137,17 +135,14 @@ class FaviconLoader {
     private fun makeResourceUrl(site: String, resource: String): String {
         var url: String = resource
 
-        // support use-current-protocol type of links, but always default to https!
         if (resource.startsWith("//")) {
             url = resource.replace("//", "https://")
         }
 
-        // prepend hostname if absolute url.
         if (resource.startsWith("/")) {
             url = "https://$site$resource"
         }
 
-        // prepend protocol and hostname if relative url - absolute urls can start with www...
         if (!resource.startsWith("http")) {
             url = "https://$site/$resource"
         }
@@ -158,15 +153,6 @@ class FaviconLoader {
     private fun decodeImageFromBytes(bytes: ByteArray, url: String): Optional<Bitmap> {
         return if (url.endsWith(".svg")) {
             // don't yet support .svg - just avoid crashing here.
-            /*val vector = VectorDrawableCompat.createFromStream(ByteArrayInputStream(bytes), "icon")
-            val bitmap = Bitmap.createBitmap(
-                    vector.intrinsicWidth,
-                    vector.intrinsicHeight,
-                    Bitmap.Config.ARGB_8888)
-
-            val canvas = Canvas(bitmap)
-            vector.setBounds(0, 0, canvas.width, canvas.height)
-            vector.draw(canvas)*/
             Optional.empty()
         } else {
             Optional.of(BitmapFactory.decodeByteArray(bytes, 0, bytes.size))
@@ -178,9 +164,6 @@ class FaviconLoader {
 
         try {
             client.get(imageUrl, RequestParams(), object : AsyncHttpResponseHandler() {
-
-                override fun onStart() {
-                }
 
                 override fun onSuccess(statusCode: Int, headers: Array<Header>, response: ByteArray) {
                     val px = TypedValue.applyDimension(
@@ -200,7 +183,6 @@ class FaviconLoader {
                         // callback before writing to disk.
                         callback.invoke(logo)
 
-                        // compress to webp and store on disk.
                         val editor: DiskLruCache.Editor = cache.edit(site.hashCode().toString())
                         val out: OutputStream = editor.newOutputStream(0)
                         logo.compress(Bitmap.CompressFormat.WEBP, 100, out)
@@ -215,14 +197,9 @@ class FaviconLoader {
                         error.invoke(exception)
                     }
                 }
-
-                override fun onRetry(retryNo: Int) {
-                    // called when request is retried
-                }
             })
         } catch (e: Exception) {
             error.invoke(e)
         }
     }
-
 }

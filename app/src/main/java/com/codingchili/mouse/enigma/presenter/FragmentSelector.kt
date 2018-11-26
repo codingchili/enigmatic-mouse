@@ -5,6 +5,12 @@ import androidx.fragment.app.FragmentManager
 import com.codingchili.mouse.enigma.R
 import com.codingchili.mouse.enigma.model.Credential
 
+
+/**
+ * @author Robin Duda
+ *
+ * Helper class to manage fragments.
+ */
 object FragmentSelector {
     private lateinit var manager : FragmentManager
 

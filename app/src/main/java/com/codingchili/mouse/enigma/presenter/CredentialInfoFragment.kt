@@ -18,6 +18,9 @@ import com.codingchili.mouse.enigma.model.Credential
 import com.codingchili.mouse.enigma.model.FaviconLoader
 
 
+/**
+ * Fragment that shows information about a single credential.
+ */
 class CredentialInfoFragment: Fragment() {
     private lateinit var credential : Credential
 

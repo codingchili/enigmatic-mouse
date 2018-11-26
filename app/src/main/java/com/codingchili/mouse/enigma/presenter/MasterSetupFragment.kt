@@ -16,6 +16,13 @@ import com.codingchili.mouse.enigma.model.MousePreferences
 import com.google.android.material.textfield.TextInputEditText
 import io.realm.Realm
 
+
+/**
+ * @author Robin Duda
+ *
+ * Fragment used to setup the master password and generate a TEE key
+ * protected by fingerprint.
+ */
 class MasterSetupFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

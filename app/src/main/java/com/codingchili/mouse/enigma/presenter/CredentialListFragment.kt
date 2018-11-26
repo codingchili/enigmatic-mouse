@@ -13,6 +13,11 @@ import com.codingchili.mouse.enigma.model.CredentialBank
 import com.codingchili.mouse.enigma.model.FaviconLoader
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+/**
+ * @author Robin Duda
+ *
+ * Fragment that displays a list of all available credentials.
+ */
 class CredentialListFragment : Fragment() {
     private lateinit var adapter: ArrayAdapter<Credential>
 

@@ -3,7 +3,6 @@ package com.codingchili.mouse.enigma
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.codingchili.mouse.enigma.presenter.FragmentSelector
-import com.codingchili.mouse.enigma.presenter.MasterSetupFragment
 import java.security.Security
 
 

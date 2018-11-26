@@ -57,23 +57,17 @@ class MousePreferences(application: Application) {
     }
 
     fun setMasterSalt(salt: ByteArray): MousePreferences {
-        preferences.edit()
-                .putString(MASTER_SALT, Base64.getEncoder().encodeToString(salt))
-                .apply()
+        preferences.edit().putString(MASTER_SALT, Base64.getEncoder().encodeToString(salt)).apply()
         return this
     }
 
     fun setTeeGenerated(): MousePreferences {
-        preferences.edit()
-                .putBoolean(TEE_GEN, true)
-                .apply()
+        preferences.edit().putBoolean(TEE_GEN, true).apply()
         return this
     }
 
     fun unsetTeeGenerated(): MousePreferences {
-        preferences.edit()
-                .putBoolean(TEE_GEN, false)
-                .apply()
+        preferences.edit().putBoolean(TEE_GEN, false).apply()
         return this
     }
 

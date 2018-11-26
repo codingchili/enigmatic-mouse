@@ -14,9 +14,10 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 
-
 /**
  * @author Robin Duda
+ *
+ * Manages the secure storage of credentials.
  */
 object CredentialBank {
     private const val KEY_NAME = "bank_mouse"
@@ -38,7 +39,7 @@ object CredentialBank {
 
         keyStore.load(null)
 
-        //key still cannot be used yet until authentication!
+        // key cannot be used until after authentication.
         val secretKey = keyStore.getKey(KEY_NAME, null)
 
         if (encrypt) {
@@ -51,17 +52,14 @@ object CredentialBank {
     fun store(credential: Credential) {
         list.add(credential)
 
-        // realms are cached so we can look it up here
-        // android warns when set as a member field.
+        // realms are cached so we can look it up here android warns when set as a member field.
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         realm.copyToRealm(credential)
         realm.commitTransaction()
         realm.close()
 
-        list.sortBy {
-            it.site
-        }
+        list.sortBy { it.site }
     }
 
     private fun generateSalt(): ByteArray {
@@ -90,10 +88,6 @@ object CredentialBank {
 
         Log.w("CredentialsBank", "Generated derived key in " + (System.currentTimeMillis() - start) + "ms")
         return bytes
-    }
-
-    fun remove(credential: Credential) {
-        list.remove(credential)
     }
 
     fun retrieve(): List<Credential> {
@@ -128,6 +122,8 @@ object CredentialBank {
 
         Realm.setDefaultConfiguration(config)
 
+        list.clear()
+
         // make sure the key is valid.
         val realm = Realm.getDefaultInstance()
         realm.where(Credential::class.java).findAll().forEach { credential ->
@@ -137,13 +133,10 @@ object CredentialBank {
     }
 
     fun install(password: String) {
-        // we use the KDF key to encrypt credentials.
         val salt = CredentialBank.generateSalt()
         val key = CredentialBank.generateKDFKey(password.toByteArray(), salt)
         val spec = SecretKeySpec(key, "AES")
 
-        // we use the fingerprint protected TEE key to decrypt the encrypted KDF key.
-        // we can also retrieve the KDF key using the master password.
         val encryptedKey = cipher.doFinal(spec.encoded)
         configureRealm(key)
 

@@ -8,6 +8,8 @@ import java.util.*
 
 /**
  * @author Robin Duda
+ *
+ * Data model for Credential information.
  */
 open class Credential(): RealmObject() {
 
