@@ -24,7 +24,7 @@ object CredentialBank {
     private const val KEYSTORE = "AndroidKeyStore"
     private const val ITERATIONS = 1024
     private const val SALT_BYTES = 32
-    private const val KDF_OUTPUT_BITS = 512
+    private const val KDF_OUTPUT_BYTES = 64
     private const val REALM_SCHEMA_VERSION = 6L
     private const val REALM_NAME = "credentials_$REALM_SCHEMA_VERSION" // skip migration support for now.
 
@@ -76,7 +76,7 @@ object CredentialBank {
 
     private fun generateKDFKey(secret: ByteArray, salt: ByteArray): ByteArray {
         val start = System.currentTimeMillis()
-        val bytes = SCrypt.generate(secret, salt, ITERATIONS, 32, 2, KDF_OUTPUT_BITS)
+        val bytes = SCrypt.generate(secret, salt, ITERATIONS, 32, 2, KDF_OUTPUT_BYTES)
 
         Log.w(javaClass.name, "Generated derived key in " + (System.currentTimeMillis() - start) + "ms")
         return bytes
