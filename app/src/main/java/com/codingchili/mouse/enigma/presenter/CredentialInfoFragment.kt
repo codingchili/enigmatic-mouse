@@ -39,7 +39,7 @@ class CredentialInfoFragment: Fragment() {
 
         view.findViewById<View>(R.id.open_website).setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(credential.site)
+            intent.data = Uri.parse("https://${credential.site}")
             startActivity(intent)
         }
 
