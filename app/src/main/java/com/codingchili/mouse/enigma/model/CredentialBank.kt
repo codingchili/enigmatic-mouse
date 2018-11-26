@@ -32,7 +32,7 @@ object CredentialBank {
     private val keyStore: KeyStore = KeyStore.getInstance(KEYSTORE)
     private val listeners = ArrayList<() -> Unit>()
     private val random = SecureRandom()
-    private var list: MutableList<Credential> = ArrayList()
+    private var cache: MutableList<Credential> = ArrayList()
 
     private lateinit var cipher: Cipher
     private lateinit var preferences: MousePreferences
@@ -52,22 +52,6 @@ object CredentialBank {
         } else {
             cipher.init(Cipher.DECRYPT_MODE, secretKey, IvParameterSpec(preferences.getTeeIv()))
         }
-    }
-
-    fun store(credential: Credential) {
-        list.remove(credential)
-        list.add(credential)
-
-        // realms are cached so we can look it up here android warns when set as a member field.
-        val realm = Realm.getDefaultInstance()
-        realm.beginTransaction()
-        realm.copyToRealmOrUpdate(credential)
-        realm.commitTransaction()
-        realm.close()
-
-        list = list.asSequence()
-                .sortedWith(compareBy({ !it.favorite }, { it.site }))
-                .toMutableList()
     }
 
     private fun generateSalt(): ByteArray {
@@ -98,8 +82,43 @@ object CredentialBank {
         return bytes
     }
 
+    fun store(credential: Credential) {
+        cache.remove(credential)
+        cache.add(credential)
+
+        // realms are cached so we can look it up here android warns when set as a member field.
+        val realm = Realm.getDefaultInstance()
+        realm.beginTransaction()
+        realm.copyToRealmOrUpdate(credential)
+        realm.commitTransaction()
+        realm.close()
+
+        sortCache()
+        onCacheUpdated()
+    }
+
     fun retrieve(): List<Credential> {
-        return list
+        return cache
+    }
+
+    fun remove(credential: Credential) {
+        cache.remove(credential)
+
+        val realm = Realm.getDefaultInstance()
+        realm.beginTransaction()
+        realm.where(credential.javaClass).equalTo("id", credential.id)
+                .findAll()
+                .deleteAllFromRealm()
+        realm.commitTransaction()
+        realm.close()
+
+        onCacheUpdated()
+    }
+
+    private fun sortCache() {
+        cache = cache.asSequence()
+                .sortedWith(compareBy({ !it.favorite }, { it.site }))
+                .toMutableList()
     }
 
     fun onChangeListener(callback: () -> Unit) {
@@ -128,13 +147,13 @@ object CredentialBank {
                 .name(REALM_NAME)
                 .build())
 
-        list.clear()
+        cache.clear()
 
-        // todo: implement migration here.
         val realm = Realm.getDefaultInstance()
         realm.where(Credential::class.java).findAll().forEach { credential ->
-            list.add(realm.copyFromRealm(credential))
+            cache.add(realm.copyFromRealm(credential))
         }
+        sortCache()
         realm.close()
     }
 

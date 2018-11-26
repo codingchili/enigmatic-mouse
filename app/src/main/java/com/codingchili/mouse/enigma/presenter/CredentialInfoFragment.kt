@@ -48,8 +48,11 @@ class CredentialInfoFragment: Fragment() {
         }
 
         view.findViewById<View>(R.id.password_copy).setOnClickListener {
-            copyToClipboard(credential.password)
-            // todo: expire clipboard?
+            copyToClipboard(credential.password) // todo: expire clipboard?
+        }
+
+        view.findViewById<View>(R.id.remove).setOnClickListener {
+            FragmentSelector.removeCredential(credential)
         }
 
         view.findViewById<View>(R.id.password_show).setOnClickListener {

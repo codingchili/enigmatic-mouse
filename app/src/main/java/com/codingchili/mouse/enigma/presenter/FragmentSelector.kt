@@ -57,4 +57,8 @@ object FragmentSelector {
                 .commit()
     }
 
+    fun removeCredential(credential: Credential) {
+        DeleteCredentialFragment().setCredential(credential).show(manager, "dialog")
+    }
+
 }

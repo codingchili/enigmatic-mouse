@@ -8,6 +8,17 @@
     <string name="menu_logo_cache_clear">Reload logos</string>
     <string name="cache_cleared">Icon cache cleared.</string>
 
+    <!-- fragment: master key setup. -->
+    <string name="master_password_header">Setup master password</string>
+    <string name="master_password_hint">Master password</string>
+    <string name="master_scan_fp_text">Scan fingerprint to confirm and encrypt</string>
+    <string name="fp_title">Scan Fingerprint</string>
+    <string name="fp_subtitle">The fingerprint key is used to encrypt your master password.</string>
+    <string name="fp_description">Your fingerprint is required to encrypt the master key.</string>
+    <string name="fp_cancel">Cancel</string>
+    <string name="fp_authenticate">Scan fingerprint to unlock</string>
+    <string name="fp_authenticate_fail">Failed to verify, try again.</string>
+
     <!-- fragment: add credentials. -->
     <string name="password_generate_tap">Tap to generate a strong password</string>
     <string name="password_weak">Weak!</string>
@@ -18,21 +29,16 @@
     <string name="hint_password">Password</string>
     <string name="credential_save">Save</string>
 
-    <!-- fragment: master key setup. -->
-    <string name="master_password_header">Setup master password</string>
-    <string name="master_password_hint">Master password</string>
-    <string name="master_scan_fp_text">Scan fingerprint to confirm and encrypt</string>
-    <string name="fp_title">Scan Fingerprint</string>
-    <string name="fp_subtitle">The fingerprint key is used to encrypt your master password.</string>
-    <string name="fp_description">Your fingerprint is required to encrypt the master key.</string>
-    <string name="fp_cancel">Cancel</string>
-    <string name="fp_authenticate">Scan fingerprint to unlock</string>
-
     <!-- fragment credential information -->
     <string name="info_password_showcopy">Copy or show password</string>
     <string name="created_at_header">Created at</string>
     <string name="clipboard_failed">Failed to copy to clipboard</string>
     <string name="clipboard_success">Copied to clipboard</string>
     <string name="info_close">Close</string>
-    <string name="fp_authenticate_fail">Failed to verify, try again.</string>
+
+    <!-- dialog delete -->
+    <string name="delete_credential">This will irrevocably remove this credential from your device. Action available in (4s).</string>
+    <string name="delete_cancel">Cancel</string>
+    <string name="delete_ok">REMOVE!</string>
+    <string name="removed_toaster">Removed:</string>
 </resources>
