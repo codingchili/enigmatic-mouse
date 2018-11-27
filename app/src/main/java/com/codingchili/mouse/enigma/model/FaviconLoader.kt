@@ -135,15 +135,15 @@ class FaviconLoader(_context: Context) {
     private fun makeResourceUrl(site: String, resource: String): String {
         var url: String = resource
 
-        if (resource.startsWith("//")) {
+        if (url.startsWith("//")) {
             url = resource.replace("//", "https://")
         }
 
-        if (resource.startsWith("/")) {
+        if (url.startsWith("/")) {
             url = "https://$site$resource"
         }
 
-        if (!resource.startsWith("http")) {
+        if (!url.startsWith("http")) {
             url = "https://$site/$resource"
         }
         Log.w("faviconURL", "resolved $site icon resource $resource into $url")
@@ -155,7 +155,7 @@ class FaviconLoader(_context: Context) {
             // don't yet support .svg - just avoid crashing here.
             Optional.empty()
         } else {
-            Optional.of(BitmapFactory.decodeByteArray(bytes, 0, bytes.size))
+            Optional.ofNullable(BitmapFactory.decodeByteArray(bytes, 0, bytes.size))
         }
     }
 
