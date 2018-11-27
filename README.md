@@ -12,6 +12,8 @@ the repository and add new features or even disable existing ones! For maximum s
 we recommend that you build and side-load the application yourself. This ensures that
 a rogue version published to the Play store won't steal all your passwords.
 
+Requires SDK26 (can probably be built with lower API levels too.)
+
 # Features
 - application is protected by fingerprint authentication.
 - securely store passwords encrypted within Realm.
@@ -60,14 +62,29 @@ a bit prettier.
 # Building
 Open the project in Android Studio, Build -> Make Project.
 
+Without Android studio,
+```
+./gradlew build
+```
+
+Find the unsigned .apk in ```app\build\outputs\apk\release```.
+
 # Installing
 
 Installing the application yourself is the recommended way, as it removes the middleman.
 
-##### Side-loading
+##### Side-loading (Android studio)
 - Open the project with android studio -> run -> select your device
 
 This will build the APK and install it onto your device.
+
+##### Side-loading (APK file)
+Follow the instructions for building an unsigned APK and then copy the .apk to your device. Alternatively download
+an APK from the releases.
+
+1. Enable installation from untrusted sources
+2. open the file to install the APK
+3. Disable installation from untrusted sources
 
 ##### Play store
 - not yet available on the play store.

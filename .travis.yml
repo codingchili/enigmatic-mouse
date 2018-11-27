@@ -1,0 +1,23 @@
+language: java
+sudo: false
+dist: trusty
+jdk: oraclejdk8
+install: true
+script:
+- "./gradlew build --info --stacktrace"
+notifications:
+  email: true
+before_cache:
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+env:
+  global:
+  - GRADLE_OPTS="-Xms256m"
+  - JDK_JAVA_OPTIONS='--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED
+    --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/sun.net.dns=ALL-UNNAMED
+    --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED
+    --add-opens=java.base/sun.nio.ch=ALL-UNNAMED'
