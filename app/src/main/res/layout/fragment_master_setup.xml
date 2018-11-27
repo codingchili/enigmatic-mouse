@@ -30,6 +30,7 @@
             android:text="@string/master_password_header" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/master_password_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,8 +43,8 @@
                 android:id="@+id/master_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textVisiblePassword"
-                android:hint="@string/master_password_hint" />
+                android:hint="@string/master_password_hint"
+                android:inputType="textVisiblePassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView

@@ -39,61 +39,62 @@ object FragmentSelector {
     }
 
     fun addCredential() {
-        manager.beginTransaction()
-                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.fade_out)
-                .replace(R.id.root, AddCredentialFragment())
-                .addToBackStack("add")
-                .commit()
+        show(AddCredentialFragment(), "add")
     }
 
     fun credentialInfo(credential: Credential) {
-        manager.beginTransaction()
-                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.fade_out)
-                .replace(R.id.root, CredentialInfoFragment().setCredential(credential))
-                .addToBackStack("info")
-                .commit()
+        show(CredentialInfoFragment().setCredential(credential), "info")
     }
 
     fun list() {
+        show(CredentialListFragment(), "list", android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+    private fun show(fragment: Fragment, tag: String) {
+        show(fragment, tag, android.R.anim.slide_in_left, android.R.anim.fade_out)
+    }
+
+    private fun show(fragment: Fragment, tag: String, inAnimation: Int, outAnimation: Int) {
         manager.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .replace(R.id.root, CredentialListFragment())
-                .addToBackStack("list")
+                .setCustomAnimations(inAnimation, outAnimation)
+                .replace(R.id.root, fragment)
+                .addToBackStack(tag)
                 .commit()
     }
 
     fun removeCredentialDialog(credential: Credential) {
-        val dialog = DialogDelayedPositiveButton()
-                .setMessage(R.string.delete_credential)
-                .setPositiveText(R.string.delete_positive)
-                .setNegativeText(R.string.delete_negative)
-                .setPositiveHandler {
-                    CredentialBank.remove(credential)
-                    FragmentSelector.back()
+        showDialog(R.string.delete_credential,
+                R.string.delete_positive,
+                R.string.delete_negative, {
+            CredentialBank.remove(credential)
+            FragmentSelector.back()
 
-                    val text = "${activity.getString(R.string.removed_toaster)} ${credential.username}@${credential.site}"
-                    Toast.makeText(activity, text, Toast.LENGTH_LONG).show()
-                }
-                .setNegativeHandler {
+            val text = "${activity.getString(R.string.removed_toaster)} " +
+                    "${credential.username}@${credential.site}"
 
-                }
-        dialog.show(manager, "dialog")
+            Toast.makeText(activity, text, Toast.LENGTH_LONG).show()
+        }, {})
     }
 
     fun clipboardWarningDialog(callback: () -> Unit) {
-        val dialog = DialogDelayedPositiveButton()
+        showDialog(R.string.clipboard_warning,
+                R.string.clipboard_positive,
+                R.string.clipboard_negative,
+                callback, {
+            Toast.makeText(activity.applicationContext,
+                    activity.getString(R.string.clipboard_warning_heeded),
+                    Toast.LENGTH_LONG).show()
+        })
+    }
 
-        dialog.setMessage(R.string.clipboard_warning)
-                .setPositiveText(R.string.clipboard_positive)
-                .setNegativeText(R.string.clipboard_negative)
-                .setPositiveHandler {
-                    callback.invoke()
-                }
-                .setNegativeHandler {
-                    Toast.makeText(activity.applicationContext,
-                            activity.getString(R.string.clipboard_warning_heeded),
-                            Toast.LENGTH_LONG).show()
-                }
+    private fun showDialog(message: Int, positiveText: Int, negativeText: Int,
+                           positiveHandler: () -> Unit, negativeHandler: () -> Unit) {
+        val dialog = DialogDelayedPositiveButton()
+        dialog.message = message
+        dialog.positiveText = positiveText
+        dialog.negativeText= negativeText
+        dialog.positiveHandler= positiveHandler
+        dialog.negativeHandler = negativeHandler
         dialog.show(manager, "dialog")
     }
 }

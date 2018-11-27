@@ -22,7 +22,7 @@ import javax.crypto.spec.SecretKeySpec
 object CredentialBank {
     private const val KEY_NAME = "bank_mouse"
     private const val KEYSTORE = "AndroidKeyStore"
-    private const val ITERATIONS = 1024
+    private const val ITERATIONS = 65536
     private const val SALT_BYTES = 32
     private const val KDF_OUTPUT_BYTES = 64
     private const val REALM_SCHEMA_VERSION = 6L
@@ -41,6 +41,10 @@ object CredentialBank {
         cipher = Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
                 + KeyProperties.BLOCK_MODE_CBC + "/"
                 + KeyProperties.ENCRYPTION_PADDING_PKCS7, "AndroidKeyStoreBCWorkaround")
+
+        if (encrypt) {
+            generateTEEKey()
+        }
 
         keyStore.load(null)
 
@@ -61,7 +65,6 @@ object CredentialBank {
     }
 
     fun generateTEEKey() {
-        // creates the key in the android keystore :)
         val keyGenParameterSpec = KeyGenParameterSpec.Builder(KEY_NAME,
                 KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
@@ -76,7 +79,7 @@ object CredentialBank {
 
     private fun generateKDFKey(secret: ByteArray, salt: ByteArray): ByteArray {
         val start = System.currentTimeMillis()
-        val bytes = SCrypt.generate(secret, salt, ITERATIONS, 32, 2, KDF_OUTPUT_BYTES)
+        val bytes = SCrypt.generate(secret, salt, ITERATIONS, 8, 1, KDF_OUTPUT_BYTES)
 
         Log.w(javaClass.name, "Generated derived key in " + (System.currentTimeMillis() - start) + "ms")
         return bytes
@@ -86,7 +89,6 @@ object CredentialBank {
         cache.remove(credential)
         cache.add(credential)
 
-        // realms are cached so we can look it up here android warns when set as a member field.
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         realm.copyToRealmOrUpdate(credential)

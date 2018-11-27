@@ -37,14 +37,16 @@
     <string name="info_close">Close</string>
 
     <!-- dialog delete -->
-    <string name="delete_credential">This will irrevocably remove this credential from your device. Action available in (4s).</string>
+    <string name="delete_credential">This will irrevocably remove this credential from your device.</string>
     <string name="delete_negative">Cancel</string>
-    <string name="delete_positive">REMOVE!</string>
+    <string name="delete_positive">Remove! (4)</string>
     <string name="removed_toaster">Removed:</string>
 
     <!-- dialog clipboard warning -->
-    <string name="clipboard_warning">Warning! Other applications on this device can access the clipboard and steal your password. Use with caution. Action blocked for (4s). This warning will not be shown again.</string>
-    <string name="clipboard_positive">Accept</string>
+    <string name="clipboard_warning">Warning! Other applications on this device can access the clipboard and steal your password.
+        Use with caution. This warning will not be shown again.</string>
+    <string name="clipboard_positive">Accept (4)</string>
     <string name="clipboard_negative">Stay safe</string>
     <string name="clipboard_warning_heeded">A wise decision, indeed.</string>
+    <string name="master_crypto_in_progress">Generating keys..</string>
 </resources>
