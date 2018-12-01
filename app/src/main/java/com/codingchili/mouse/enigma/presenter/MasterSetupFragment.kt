@@ -31,11 +31,11 @@ import io.realm.Realm
  */
 class MasterSetupFragment : Fragment() {
     private lateinit var fingerprints: FingerprintManagerCompat
-    private lateinit var preferences : MousePreferences
+    private lateinit var preferences: MousePreferences
 
-    private lateinit var icon : ImageView
+    private lateinit var icon: ImageView
     private lateinit var subheading: TextView
-    private lateinit var password : TextInputEditText
+    private lateinit var password: TextInputEditText
     private lateinit var passwordContainer: TextInputLayout
     private lateinit var header: TextView
 
@@ -72,7 +72,7 @@ class MasterSetupFragment : Fragment() {
             header.visibility = View.GONE
         } else {
             subheading.text = if (fingerprintSupported()) getString(R.string.master_scan_fp_text)
-                else getString(R.string.master_authenticate)
+            else getString(R.string.master_authenticate)
         }
 
         if (fingerprintSupported()) {
@@ -82,15 +82,22 @@ class MasterSetupFragment : Fragment() {
 
         view.findViewById<ImageView>(R.id.fp_icon).setOnClickListener {
             if (preferences.isKeyInstalled()) {
-                subheading.text = getString(R.string.master_crypto_verifying)
-                animatedFeedback()
-                AsyncTask.execute {
-                    if (CredentialBank.unlockWithPassword(password.text.toString())) {
-                        activity!!.runOnUiThread {
-                            FragmentSelector.list()
+
+                if (password.text!!.isEmpty()) {
+                    // user taps the login button when in FP mode - no text entered.
+                    subheading.text = getString(R.string.master_authenticate)
+                    showPasswordLogin()
+                } else {
+                    subheading.text = getString(R.string.master_crypto_verifying)
+                    animatedFeedback()
+                    AsyncTask.execute {
+                        if (CredentialBank.unlockWithPassword(password.text.toString())) {
+                            activity!!.runOnUiThread {
+                                FragmentSelector.list()
+                            }
+                        } else {
+                            onAuthenticationFailed()
                         }
-                    } else {
-                        onAuthenticationFailed()
                     }
                 }
             } else {
@@ -116,7 +123,8 @@ class MasterSetupFragment : Fragment() {
                     }
 
                     override fun onAuthenticationFailed() {
-                        onAuthenticationFailed()
+                        this@MasterSetupFragment.onAuthenticationFailed()
+                        this@MasterSetupFragment.authenticateWithFingerprint()
                     }
                 },
                 null)
@@ -159,7 +167,7 @@ class MasterSetupFragment : Fragment() {
 
     private fun onAuthenticationFailed() {
         activity!!.runOnUiThread {
-            view!!.findViewById<TextView>(R.id.fp_header).text = getString(R.string.fp_authenticate_fail)
+            subheading.text = getString(R.string.fp_authenticate_fail)
             val icon = view!!.findViewById<ImageView>(R.id.fp_icon)
             icon.clearAnimation()
 
@@ -167,13 +175,13 @@ class MasterSetupFragment : Fragment() {
                     ContextCompat.getColor(context!!, R.color.accent),
                     android.graphics.PorterDuff.Mode.MULTIPLY)
 
-            if (fingerprintSupported()) {
-                icon.setImageResource(R.drawable.baseline_fingerprint_24)
-            } else {
-                passwordContainer.visibility = View.VISIBLE
-                icon.setImageResource(R.drawable.baseline_launch_24)
-            }
+            showPasswordLogin()
         }
+    }
+
+    private fun showPasswordLogin() {
+        passwordContainer.visibility = View.VISIBLE
+        icon.setImageResource(R.drawable.baseline_launch_24)
     }
 
     private fun fingerprintSupported(): Boolean {
