@@ -1,5 +1,6 @@
 package com.codingchili.mouse.enigma.presenter
 
+import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
 import android.text.InputType
@@ -9,7 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
-import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -61,8 +62,6 @@ class MasterSetupFragment : Fragment() {
         subheading = view.findViewById(R.id.fp_header)
         icon = view.findViewById(R.id.fp_icon)
 
-        password.onEditorAction(EditorInfo.IME_ACTION_DONE)
-
         adaptViewForFingerprintSensorAvailability()
 
         if (preferences.isKeyInstalled()) {
@@ -79,6 +78,8 @@ class MasterSetupFragment : Fragment() {
         }
 
         view.findViewById<ImageView>(R.id.fp_icon).setOnClickListener {
+            hideKeyboard()
+
             if (preferences.isKeyInstalled()) {
 
                 if (password.text!!.isEmpty()) {
@@ -91,7 +92,7 @@ class MasterSetupFragment : Fragment() {
                     AsyncTask.execute {
                         if (CredentialBank.unlockWithPassword(password.text.toString())) {
                             activity!!.runOnUiThread {
-                                FragmentSelector.list()
+                                finish()
                             }
                         } else {
                             onAuthenticationFailed()
@@ -104,6 +105,18 @@ class MasterSetupFragment : Fragment() {
         }
     }
 
+    private fun finish() {
+        hideKeyboard()
+        FragmentSelector.list()
+    }
+
+    private fun hideKeyboard() {
+        if (activity != null) {
+            val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            imm!!.hideSoftInputFromWindow(password.windowToken, 0)
+        }
+    }
+
     private fun authenticateWithFingerprint() {
         fingerprints.authenticate(
                 FingerprintManagerCompat.CryptoObject(CredentialBank.getCipher()),
@@ -112,9 +125,10 @@ class MasterSetupFragment : Fragment() {
                 object : FingerprintManagerCompat.AuthenticationCallback() {
 
                     override fun onAuthenticationSucceeded(result: FingerprintManagerCompat.AuthenticationResult?) {
+                        hideKeyboard()
                         if (preferences.isKeyInstalled()) {
                             CredentialBank.decryptMasterKeyWithFingerprint()
-                            FragmentSelector.list()
+                            finish()
                         } else {
                             install(true)
                         }
@@ -141,7 +155,7 @@ class MasterSetupFragment : Fragment() {
             }
 
             activity!!.runOnUiThread {
-                FragmentSelector.list()
+                finish()
             }
         }
     }
