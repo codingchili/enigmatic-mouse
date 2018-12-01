@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="MouseTheme" parent="Theme.MaterialComponents">
+    <style name="MouseTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
         <!--<item name="windowActionBar">false</item>-->
         <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>

@@ -6,7 +6,8 @@
     <string name="menu_info">Info</string>
     <string name="clear_all_dev">Clear (dev option)</string>
     <string name="menu_logo_cache_clear">Reload logos</string>
-    <string name="cache_cleared">Icon cache cleared.</string>
+    <string name="icons_reloading">Reloading icons</string>
+    <string name="icons_reloaded">Icons reloaded</string>
 
     <!-- fragment: master key setup. -->
     <string name="master_password_header">Setup master password</string>
@@ -37,7 +38,15 @@
     <string name="created_at_header">Created at</string>
     <string name="clipboard_failed">Failed to copy to clipboard</string>
     <string name="clipboard_success">Copied to clipboard</string>
+    <string name="credential_header">%1$s@%2$s</string>
     <string name="info_close">Close</string>
+
+    <!-- breach list -->
+    <string name="pwned_check">Check security lists</string>
+    <string name="pwned_check_error">Error retrieving breach list</string>
+    <string name="pwned_updating_lists">Updating security lists</string>
+    <string name="pwned_list_updated">Security lists updated.</string>
+    <string name="credential_breached_header">Security breach - %1$s</string>
 
     <!-- dialog delete -->
     <string name="delete_credential">This will irrevocably remove this credential from your device.</string>
@@ -51,4 +60,8 @@
     <string name="clipboard_positive">Accept (4)</string>
     <string name="clipboard_negative">Stay safe</string>
     <string name="clipboard_warning_heeded">A wise decision, indeed.</string>
+    <string name="launch_website">Open browser</string>
+    <string name="show_password">show_password</string>
+    <string name="copy_clipboard">Copy</string>
+
 </resources>

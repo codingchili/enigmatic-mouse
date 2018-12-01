@@ -7,7 +7,7 @@ import java.security.Security
 
 
 /**
- * @author Robin Duda
+ * The Main activity.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        setSupportActionBar(findViewById(R.id.bottom_app_bar))
 
         FragmentSelector.init(this)
         FragmentSelector.master()

@@ -10,8 +10,6 @@ import com.codingchili.mouse.enigma.model.CredentialBank
 
 
 /**
- * @author Robin Duda
- *
  * Helper class to manage fragments.
  */
 object FragmentSelector {
@@ -70,7 +68,7 @@ object FragmentSelector {
             FragmentSelector.back()
 
             val text = "${activity.getString(R.string.removed_toaster)} " +
-                    "${credential.username}@${credential.site}"
+                    "${credential.username}@${credential.domain}"
 
             Toast.makeText(activity, text, Toast.LENGTH_LONG).show()
         }, {})

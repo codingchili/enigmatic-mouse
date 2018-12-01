@@ -16,8 +16,6 @@ import javax.crypto.spec.SecretKeySpec
 
 
 /**
- * @author Robin Duda
- *
  * Manages the secure storage of credentials.
  */
 object CredentialBank {
@@ -26,7 +24,7 @@ object CredentialBank {
     private const val ITERATIONS = 65536
     private const val SALT_BYTES = 32
     private const val KDF_OUTPUT_BYTES = 64
-    private const val REALM_SCHEMA_VERSION = 7L
+    private const val REALM_SCHEMA_VERSION = 8L
     private const val REALM_NAME = "credentials_$REALM_SCHEMA_VERSION" // skip migration support for now.
 
     private val keyGenerator: KeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE)
@@ -120,7 +118,7 @@ object CredentialBank {
 
     private fun sortCache() {
         cache = cache.asSequence()
-                .sortedWith(compareBy({ !it.favorite }, { it.site }))
+                .sortedWith(compareBy({ !it.favorite }, { it.domain }))
                 .toMutableList()
     }
 

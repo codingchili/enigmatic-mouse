@@ -13,14 +13,5 @@
         android:title="@string/menu_info"
         android:icon="@drawable/baseline_info_24"
         app:showAsAction="never"/>
-    <item
-        android:id="@+id/clean_all_dev"
-        android:title="@string/clear_all_dev"
-        android:icon="@drawable/baseline_delete_outline_24"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/clear_logo_cache"
-        android:title="@string/menu_logo_cache_clear"
-        android:icon="@drawable/baseline_sync_24"
-        app:showAsAction="never"/>
+
 </menu>

@@ -18,16 +18,13 @@ import kotlin.math.roundToInt
 
 
 /**
- * @author Robin Duda
- *
  * Loads the favicon of the given url.
  */
 
 const val DP_SIZE = 96f // matches the maximum size we display in the UI.
 
-class FaviconLoader(_context: Context) {
+class FaviconLoader(private val context: Context) {
     private lateinit var cache: DiskLruCache
-    private val context: Context = _context
 
     init {
         open()

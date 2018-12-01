@@ -3,6 +3,8 @@ package com.codingchili.mouse.enigma.model
 import android.app.Application
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 private const val KEY_INSTALLED = "KEY_INSTALLED"
@@ -11,8 +13,12 @@ private const val MASTER_SALT = "MASTER_SALT"
 private const val MASTER_KEY = "MASTER_KEY"
 private const val CLIPBOARD_WARNING = "CLIPBOARD_WARNING"
 private const val FP_SUPPORTED = "FP_SUPPORTED"
+private const val PWNED_CHECK = "PWNED_CHECK"
 private const val fileName = "mouse.prefs"
 
+/**
+ * Preferences wrapper.
+ */
 class MousePreferences(application: Application) {
     private var preferences : SharedPreferences =
             application.getSharedPreferences(fileName, MODE_PRIVATE)
@@ -83,6 +89,7 @@ class MousePreferences(application: Application) {
         preferences.edit()
                 .putBoolean(KEY_INSTALLED, false)
                 .putBoolean(FP_SUPPORTED, true)
+                .putString(PWNED_CHECK, null)
                 .apply()
         return this
     }
@@ -103,5 +110,22 @@ class MousePreferences(application: Application) {
 
     fun isSupportingFP(): Boolean {
         return preferences.getBoolean(FP_SUPPORTED, true)
+    }
+
+    fun setLastPwnedCheck(date: ZonedDateTime): MousePreferences {
+        preferences.edit()
+                .putString(PWNED_CHECK, date.format(DateTimeFormatter.ISO_DATE_TIME))
+                .apply()
+        return this
+    }
+
+    fun lastPwnedCheck(): ZonedDateTime {
+        val date = Optional.ofNullable(preferences.getString(PWNED_CHECK, null))
+
+        val parsed = date.map { string ->
+            ZonedDateTime.parse(string, DateTimeFormatter.ISO_DATE_TIME)
+        }
+        // if unset scan breaches in the last 6 months.
+        return parsed.orElse(ZonedDateTime.now().minusMonths(6))
     }
 }

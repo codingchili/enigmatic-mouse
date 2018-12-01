@@ -21,8 +21,6 @@ import com.codingchili.mouse.enigma.R
 
 
 /**
- * @author Robin Duda
- *
  * Fragment for adding new credentials.
  */
 internal class AddCredentialFragment: Fragment() {
