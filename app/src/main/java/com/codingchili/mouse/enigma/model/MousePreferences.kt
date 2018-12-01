@@ -5,11 +5,12 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import java.util.*
 
-private const val TEE_GEN = "TEE_GEN"
+private const val KEY_INSTALLED = "KEY_INSTALLED"
 private const val TEE_IV = "TEE_IV"
 private const val MASTER_SALT = "MASTER_SALT"
 private const val MASTER_KEY = "MASTER_KEY"
 private const val CLIPBOARD_WARNING = "CLIPBOARD_WARNING"
+private const val FP_SUPPORTED = "FP_SUPPORTED"
 private const val fileName = "mouse.prefs"
 
 class MousePreferences(application: Application) {
@@ -36,8 +37,8 @@ class MousePreferences(application: Application) {
         }
     }
 
-    fun isTeeGenerated(): Boolean {
-        return preferences.getBoolean(TEE_GEN, false)
+    fun isKeyInstalled(): Boolean {
+        return preferences.getBoolean(KEY_INSTALLED, false)
     }
 
     fun getEncryptedMaster(): ByteArray {
@@ -73,13 +74,16 @@ class MousePreferences(application: Application) {
         return this
     }
 
-    fun setTeeGenerated(): MousePreferences {
-        preferences.edit().putBoolean(TEE_GEN, true).apply()
+    fun setInstalled(): MousePreferences {
+        preferences.edit().putBoolean(KEY_INSTALLED, true).apply()
         return this
     }
 
-    fun unsetTeeGenerated(): MousePreferences {
-        preferences.edit().putBoolean(TEE_GEN, false).apply()
+    fun reset(): MousePreferences {
+        preferences.edit()
+                .putBoolean(KEY_INSTALLED, false)
+                .putBoolean(FP_SUPPORTED, true)
+                .apply()
         return this
     }
 
@@ -88,5 +92,16 @@ class MousePreferences(application: Application) {
                 .putString(MASTER_KEY, Base64.getEncoder().encodeToString(encryptedKey))
                 .apply()
         return this
+    }
+
+    fun setFPSupported(supported: Boolean): MousePreferences {
+        preferences.edit()
+                .putBoolean(FP_SUPPORTED, supported)
+                .apply()
+        return this
+    }
+
+    fun isSupportingFP(): Boolean {
+        return preferences.getBoolean(FP_SUPPORTED, true)
     }
 }

@@ -5,6 +5,7 @@ import android.security.keystore.KeyProperties
 import android.util.Log
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import io.realm.exceptions.RealmFileException
 import org.spongycastle.crypto.generators.SCrypt
 import java.security.KeyStore
 import java.security.SecureRandom
@@ -25,7 +26,7 @@ object CredentialBank {
     private const val ITERATIONS = 65536
     private const val SALT_BYTES = 32
     private const val KDF_OUTPUT_BYTES = 64
-    private const val REALM_SCHEMA_VERSION = 6L
+    private const val REALM_SCHEMA_VERSION = 7L
     private const val REALM_NAME = "credentials_$REALM_SCHEMA_VERSION" // skip migration support for now.
 
     private val keyGenerator: KeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE)
@@ -137,7 +138,7 @@ object CredentialBank {
         this.preferences = preferences
     }
 
-    fun load() {
+    fun decryptMasterKeyWithFingerprint() {
         val decryptedKey = cipher.doFinal(preferences.getEncryptedMaster())
         configureRealm(decryptedKey)
     }
@@ -159,18 +160,41 @@ object CredentialBank {
         realm.close()
     }
 
-    fun install(password: String) {
+    fun installWithFingerprint(password: String) {
+        val key = installWithPassword(password)
+
+        val spec = SecretKeySpec(key, "AES")
+        val encryptedKey = cipher.doFinal(spec.encoded)
+
+        preferences.setEncryptedMaster(encryptedKey)
+                .setTeeIV(cipher.iv)
+                .setFPSupported(true)
+    }
+
+    fun installWithPassword(password: String): ByteArray {
         val salt = CredentialBank.generateSalt()
         val key = CredentialBank.generateKDFKey(password.toByteArray(), salt)
-        val spec = SecretKeySpec(key, "AES")
 
-        val encryptedKey = cipher.doFinal(spec.encoded)
         configureRealm(key)
 
         preferences.setMasterSalt(salt)
-                .setTeeIV(cipher.iv)
-                .setEncryptedMaster(encryptedKey)
-                .setTeeGenerated()
+                .setFPSupported(false)
+                .setInstalled()
+
+        return key
+    }
+
+    fun unlockWithPassword(password: String): Boolean {
+        return try {
+            configureRealm(generateKDFKey(password.toByteArray(), preferences.getMasterSalt()))
+            true
+        } catch (e: RealmFileException) {
+            if (e.kind == RealmFileException.Kind.ACCESS_ERROR) {
+                false
+            } else {
+                throw e
+            }
+        }
     }
 
     fun getCipher(): Cipher {
@@ -178,7 +202,7 @@ object CredentialBank {
     }
 
     fun uninstall() {
-        preferences.unsetTeeGenerated()
+        preferences.reset()
         preferences.setClipboardWarned(false)
         try {
             Realm.deleteRealm(RealmConfiguration.Builder().name(REALM_NAME).build())

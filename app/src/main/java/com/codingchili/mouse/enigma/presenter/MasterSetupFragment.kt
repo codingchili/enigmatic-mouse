@@ -2,6 +2,7 @@ package com.codingchili.mouse.enigma.presenter
 
 import android.os.AsyncTask
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.codingchili.mouse.enigma.R
 import com.codingchili.mouse.enigma.model.CredentialBank
 import com.codingchili.mouse.enigma.model.MousePreferences
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import io.realm.Realm
 
 
@@ -28,10 +30,23 @@ import io.realm.Realm
  * protected by fingerprint.
  */
 class MasterSetupFragment : Fragment() {
+    private lateinit var fingerprints: FingerprintManagerCompat
+    private lateinit var preferences : MousePreferences
+
+    private lateinit var icon : ImageView
+    private lateinit var subheading: TextView
+    private lateinit var password : TextInputEditText
+    private lateinit var passwordContainer: TextInputLayout
+    private lateinit var header: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        preferences = MousePreferences(activity!!.application)
+        fingerprints = FingerprintManagerCompat.from(context!!)
+
+        CredentialBank.setPreferences(MousePreferences(activity!!.application))
         Realm.init(context!!.applicationContext)
     }
 
@@ -42,24 +57,49 @@ class MasterSetupFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val header = view.findViewById<TextView>(R.id.fp_header)
-        val preferences = MousePreferences(activity!!.application)
-        val password = view.findViewById<TextInputEditText>(R.id.master_password)
+        header = view.findViewById(R.id.master_password_header)
+        password = view.findViewById(R.id.master_password)
+        passwordContainer = view.findViewById(R.id.master_password_layout)
+        subheading = view.findViewById(R.id.fp_header)
+        icon = view.findViewById(R.id.fp_icon)
+
         password.onEditorAction(EditorInfo.IME_ACTION_DONE)
 
-        CredentialBank.setPreferences(preferences)
+        adaptViewForFingerprintSensorAvailability()
 
-        if (preferences.isTeeGenerated()) {
-            header.text = getString(R.string.fp_authenticate)
-            view.findViewById<View>(R.id.master_password).visibility = View.GONE
-            view.findViewById<View>(R.id.master_password_header).visibility = View.GONE
-            CredentialBank.initCipher(false)
+        if (preferences.isKeyInstalled()) {
+            password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            header.visibility = View.GONE
         } else {
-            header.text = getString(R.string.master_scan_fp_text)
-            CredentialBank.initCipher(true)
+            subheading.text = if (fingerprintSupported()) getString(R.string.master_scan_fp_text)
+                else getString(R.string.master_authenticate)
         }
 
-        val fingerprints: FingerprintManagerCompat = FingerprintManagerCompat.from(context!!)
+        if (fingerprintSupported()) {
+            CredentialBank.initCipher(!preferences.isKeyInstalled())
+            authenticateWithFingerprint()
+        }
+
+        view.findViewById<ImageView>(R.id.fp_icon).setOnClickListener {
+            if (preferences.isKeyInstalled()) {
+                subheading.text = getString(R.string.master_crypto_verifying)
+                animatedFeedback()
+                AsyncTask.execute {
+                    if (CredentialBank.unlockWithPassword(password.text.toString())) {
+                        activity!!.runOnUiThread {
+                            FragmentSelector.list()
+                        }
+                    } else {
+                        onAuthenticationFailed()
+                    }
+                }
+            } else {
+                install(false)
+            }
+        }
+    }
+
+    private fun authenticateWithFingerprint() {
         fingerprints.authenticate(
                 FingerprintManagerCompat.CryptoObject(CredentialBank.getCipher()),
                 0,
@@ -67,37 +107,80 @@ class MasterSetupFragment : Fragment() {
                 object : FingerprintManagerCompat.AuthenticationCallback() {
 
                     override fun onAuthenticationSucceeded(result: FingerprintManagerCompat.AuthenticationResult?) {
-                        CredentialBank.setPreferences(MousePreferences(activity!!.application))
-
-                        if (preferences.isTeeGenerated()) {
-                            CredentialBank.load()
+                        if (preferences.isKeyInstalled()) {
+                            CredentialBank.decryptMasterKeyWithFingerprint()
                             FragmentSelector.list()
                         } else {
-                            header.text = getString(R.string.master_crypto_in_progress)
-                            animatedFeedback(view)
-
-                            AsyncTask.execute {
-                                CredentialBank.install(password.text.toString())
-                                activity!!.runOnUiThread {
-                                    FragmentSelector.list()
-                                }
-                            }
+                            install(true)
                         }
                     }
 
                     override fun onAuthenticationFailed() {
-                        view.findViewById<TextView>(R.id.fp_header).text = getString(R.string.fp_authenticate_fail)
-                        view.findViewById<ImageView>(R.id.fp_icon)
-                                .setColorFilter(
-                                        ContextCompat.getColor(context!!, R.color.accent),
-                                        android.graphics.PorterDuff.Mode.MULTIPLY)
+                        onAuthenticationFailed()
                     }
                 },
                 null)
+
     }
 
-    private fun animatedFeedback(view: View) {
-        val icon = view.findViewById<ImageView>(R.id.fp_icon)
+    private fun install(fingerprint: Boolean) {
+        subheading.text = getString(R.string.master_crypto_in_progress)
+        animatedFeedback()
+        AsyncTask.execute {
+
+            if (fingerprint) {
+                CredentialBank.installWithFingerprint(password.text.toString())
+            } else {
+                CredentialBank.installWithPassword(password.text.toString())
+            }
+
+            activity!!.runOnUiThread {
+                FragmentSelector.list()
+            }
+        }
+    }
+
+    private fun adaptViewForFingerprintSensorAvailability() {
+        if (fingerprintSupported()) {
+            subheading.text = getString(R.string.fp_authenticate)
+
+            if (preferences.isKeyInstalled()) {
+                passwordContainer.visibility = View.GONE
+                header.visibility = View.GONE
+            }
+
+            icon.setImageResource(R.drawable.baseline_fingerprint_24)
+        } else {
+            subheading.text = getString(R.string.master_authenticate)
+            passwordContainer.visibility = View.VISIBLE
+            icon.setImageResource(R.drawable.baseline_launch_24)
+        }
+    }
+
+    private fun onAuthenticationFailed() {
+        activity!!.runOnUiThread {
+            view!!.findViewById<TextView>(R.id.fp_header).text = getString(R.string.fp_authenticate_fail)
+            val icon = view!!.findViewById<ImageView>(R.id.fp_icon)
+            icon.clearAnimation()
+
+            icon.setColorFilter(
+                    ContextCompat.getColor(context!!, R.color.accent),
+                    android.graphics.PorterDuff.Mode.MULTIPLY)
+
+            if (fingerprintSupported()) {
+                icon.setImageResource(R.drawable.baseline_fingerprint_24)
+            } else {
+                passwordContainer.visibility = View.VISIBLE
+                icon.setImageResource(R.drawable.baseline_launch_24)
+            }
+        }
+    }
+
+    private fun fingerprintSupported(): Boolean {
+        return (fingerprints.isHardwareDetected && preferences.isSupportingFP())
+    }
+
+    private fun animatedFeedback() {
         val animation = RotateAnimation(0.0f,
                 360.0f,
                 Animation.RELATIVE_TO_SELF,
@@ -111,7 +194,7 @@ class MasterSetupFragment : Fragment() {
         animation.duration = 700
         icon.startAnimation(animation)
 
-        view.findViewById<View>(R.id.master_password_header).visibility = View.GONE
-        view.findViewById<View>(R.id.master_password_layout).visibility = View.GONE
+        header.visibility = View.GONE
+        passwordContainer.visibility = View.GONE
     }
 }

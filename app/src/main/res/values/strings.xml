@@ -18,6 +18,9 @@
     <string name="fp_cancel">Cancel</string>
     <string name="fp_authenticate">Scan fingerprint to unlock</string>
     <string name="fp_authenticate_fail">Failed to verify, try again.</string>
+    <string name="master_crypto_in_progress">Generating keys..</string>
+    <string name="master_crypto_verifying">Verifying password..</string>
+    <string name="master_authenticate">Tap to authenticate</string>
 
     <!-- fragment: add credentials. -->
     <string name="password_generate_tap">Tap to generate a strong password</string>
@@ -48,5 +51,4 @@
     <string name="clipboard_positive">Accept (4)</string>
     <string name="clipboard_negative">Stay safe</string>
     <string name="clipboard_warning_heeded">A wise decision, indeed.</string>
-    <string name="master_crypto_in_progress">Generating keys..</string>
 </resources>
