@@ -9,6 +9,8 @@ import io.realm.exceptions.RealmFileException
 import org.spongycastle.crypto.generators.SCrypt
 import java.security.KeyStore
 import java.security.SecureRandom
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.spec.IvParameterSpec
@@ -22,19 +24,22 @@ object CredentialBank {
     private const val KEY_NAME = "bank_mouse"
     private const val KEYSTORE = "AndroidKeyStore"
     private const val ITERATIONS = 65536
+    private const val MAX_LOG_BUFFER = 256
     private const val SALT_BYTES = 32
     private const val KDF_OUTPUT_BYTES = 64
-    private const val REALM_SCHEMA_VERSION = 9L
+    private const val REALM_SCHEMA_VERSION = 10L
     private const val REALM_NAME = "credentials_$REALM_SCHEMA_VERSION" // skip migration support for now.
 
     private val keyGenerator: KeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE)
     private val keyStore: KeyStore = KeyStore.getInstance(KEYSTORE)
     private val listeners = ArrayList<() -> Unit>()
     private val random = SecureRandom()
-    private var cache: MutableList<Credential> = ArrayList()
+    private var cache : MutableList<Credential> = ArrayList()
+    private var vault: Vault = Vault()
 
     private lateinit var cipher: Cipher
     private lateinit var preferences: MousePreferences
+    private lateinit var realm : Realm
 
     fun initCipher(encrypt: Boolean) {
         cipher = Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
@@ -88,14 +93,48 @@ object CredentialBank {
         cache.remove(credential)
         cache.add(credential)
 
-        val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
-        realm.copyToRealmOrUpdate(credential)
+        vault.credentials.clear()
+        vault.credentials.addAll(cache)
+        realm.copyToRealmOrUpdate(vault)
         realm.commitTransaction()
-        realm.close()
 
         sortCache()
         onCacheUpdated()
+    }
+
+    private fun save() {
+        realm.beginTransaction()
+        realm.copyToRealmOrUpdate(vault)
+        realm.commitTransaction()
+    }
+
+    fun onFingerprintAuthenticated() {
+        log("Authenticated using fingerprint.")
+    }
+
+    fun auditLog(): List<String> {
+        return vault.log
+    }
+
+    fun onPasswordAuthenticate() {
+        log("Authenticated using password.")
+    }
+
+    private fun log(line: String) {
+        val timestamp: String = ZonedDateTime.now()
+                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+
+        if (vault.log.size > MAX_LOG_BUFFER) {
+            vault.log.removeAt(vault.log.size -1)
+        }
+
+
+        realm.beginTransaction()
+        vault.log.add(0, "$timestamp: $line")
+        realm.commitTransaction()
+
+        save()
     }
 
     fun retrieve(): List<Credential> {
@@ -105,13 +144,11 @@ object CredentialBank {
     fun remove(credential: Credential) {
         cache.remove(credential)
 
-        val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         realm.where(credential.javaClass).equalTo("id", credential.id)
                 .findAll()
                 .deleteAllFromRealm()
         realm.commitTransaction()
-        realm.close()
 
         onCacheUpdated()
     }
@@ -119,7 +156,7 @@ object CredentialBank {
     private fun sortCache() {
         cache = cache.asSequence()
                 .sortedWith(compareBy({ !it.favorite }, { it.domain }))
-                .toMutableList()
+                .toMutableList() as ArrayList
     }
 
     fun onChangeListener(callback: () -> Unit) {
@@ -150,12 +187,16 @@ object CredentialBank {
 
         cache.clear()
 
-        val realm = Realm.getDefaultInstance()
-        realm.where(Credential::class.java).findAll().forEach { credential ->
-            cache.add(realm.copyFromRealm(credential))
+        realm = Realm.getDefaultInstance()
+        realm.where(Vault::class.java).findAll().forEach { vault ->
+            this.vault = vault
+
+            this.vault.credentials.forEach { credential ->
+                // todo: should be managed?
+                cache.add(realm.copyFromRealm(credential))
+            }
         }
         sortCache()
-        realm.close()
     }
 
     fun installWithFingerprint(password: String) {
@@ -207,5 +248,26 @@ object CredentialBank {
         } catch (e: Exception) {
             Log.w(javaClass.name, e.message)
         }
+    }
+
+    fun pwnsByDomain(domain: String): List<PwnedSite> {
+        val matches = ArrayList<PwnedSite>()
+
+        for (pwnedSite in vault.pwned) {
+            if (domain == pwnedSite.domain) {
+                matches.add(pwnedSite)
+            }
+        }
+
+        return matches
+    }
+
+    fun setPwnedList(pwned: Map<String, List<PwnedSite>>) {
+        vault.pwned.clear()
+
+        pwned.values.forEach { list ->
+            vault.pwned.addAll(list)
+        }
+        save()
     }
 }

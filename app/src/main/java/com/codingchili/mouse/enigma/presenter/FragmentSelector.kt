@@ -44,6 +44,14 @@ object FragmentSelector {
         show(CredentialInfoFragment().setCredential(credential), "info")
     }
 
+    fun info() {
+        show(ApplicationInfoFragment(), "app_info")
+    }
+
+    fun settings() {
+        show(ApplicationSettingsFragment(), "app_settings")
+    }
+
     fun list() {
         show(CredentialListFragment(), "list", android.R.anim.fade_in, android.R.anim.fade_out)
     }

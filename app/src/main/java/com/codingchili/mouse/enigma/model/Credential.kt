@@ -1,9 +1,7 @@
 package com.codingchili.mouse.enigma.model
 
-import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
-import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -26,7 +24,6 @@ open class Credential(): RealmObject() {
     var username: String = ""
     var password: String = ""
     var favorite: Boolean = false
-    var pwns = RealmList<PwnedSite>()
 
     override fun equals(other: Any?): Boolean {
         return other != null && id == (other as Credential).id

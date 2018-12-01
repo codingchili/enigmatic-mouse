@@ -76,26 +76,10 @@ class CredentialListFragment : Fragment() {
         checker.check(sites, { pwned ->
             Toast.makeText(activity, getString(R.string.pwned_updating_lists), Toast.LENGTH_SHORT).show()
 
-            val modified = HashSet<Credential>()
+            CredentialBank.setPwnedList(pwned)
 
-            CredentialBank.retrieve().forEach { credential ->
-                if (pwned.containsKey(credential.domain)) {
-                    pwned[credential.domain]!!.forEach {
-                        if (!credential.pwns.contains(it)) {
-                            credential.pwns.add(it)
-                            modified.add(credential)
-                        }
-                    }
-                }
-            }
-
-            AsyncTask.execute {
-                modified.forEach { credential ->
-                    CredentialBank.store(credential)
-                }
-                activity!!.runOnUiThread {
-                    Toast.makeText(activity, getString(R.string.pwned_list_updated), Toast.LENGTH_SHORT).show()
-                }
+            activity!!.runOnUiThread {
+                Toast.makeText(activity, getString(R.string.pwned_list_updated), Toast.LENGTH_SHORT).show()
             }
 
         }, {
@@ -166,7 +150,9 @@ class CredentialListFragment : Fragment() {
                 val domain = item.findViewById<TextView>(R.id.url)
                 domain.text = credential.domain
 
-                credential.pwns.forEach { pwn ->
+                val pwned = CredentialBank.pwnsByDomain(credential.domain)
+
+                pwned.forEach { pwn ->
                     domain.setTextColor(context.getColor(R.color.text))
                     if (!pwn.acknowledged) {
                         domain.setTextColor(context.getColor(R.color.accent))

@@ -2,15 +2,18 @@
     <string name="app_name">Mouse Enigma</string>
 
     <!-- navigation menu. -->
-    <string name="menu_rate">Rate</string>
-    <string name="menu_info">Info</string>
-    <string name="Settings">Settings</string>
+    <string name="navigation_rate">Rate</string>
+    <string name="navigation_info">Info</string>
+    <string name="navigation_settings">Settings</string>
 
     <!-- credential list menu -->
     <string name="clear_all_dev">Clear (dev option)</string>
     <string name="menu_logo_cache_clear">Reload logos</string>
     <string name="icons_reloading">Reloading icons</string>
     <string name="icons_reloaded">Icons reloaded</string>
+    <string name="navigation_website">Show website</string>
+    <string name="website_url">https://zapperfly-asm.com/</string>
+    <string name="app_url">https://google.com/</string>
 
     <!-- fragment: master key setup. -->
     <string name="master_password_header">Setup master password</string>
@@ -48,6 +51,10 @@
     <string name="show_password">show_password</string>
     <string name="copy_clipboard">Copy</string>
 
+    <!-- fragment app info -->
+    <string name="tap_octocat">Tap on Octocat to visit us on GitHub</string>
+    <string name="app_info_string"><b>Copyright 2018 Robin Duda</b>\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
+
     <!-- breach list -->
     <string name="pwned_check">Check security lists</string>
     <string name="pwned_check_error">Error retrieving breach list</string>
@@ -58,15 +65,16 @@
     <!-- dialog delete -->
     <string name="delete_credential">This will irrevocably remove this credential from your device.</string>
     <string name="delete_negative">Cancel</string>
-    <string name="delete_positive">Remove! (4)</string>
+    <string name="delete_positive">Remove!</string>
     <string name="removed_toaster">Removed:</string>
 
     <!-- dialog clipboard warning -->
     <string name="clipboard_warning">Warning! Other applications on this device can access the clipboard and steal your password.
         Use with caution. This warning will not be shown again.</string>
-    <string name="clipboard_positive">Accept (4)</string>
+    <string name="clipboard_positive">Accept</string>
     <string name="clipboard_negative">Stay safe</string>
     <string name="clipboard_warning_heeded">A wise decision, indeed.</string>
-
+    <string name="fp_enabled">enabled</string>
+    <string name="fp_not_enabled">disabled</string>
 
 </resources>

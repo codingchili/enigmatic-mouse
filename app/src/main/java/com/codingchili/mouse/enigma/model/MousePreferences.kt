@@ -14,6 +14,9 @@ private const val MASTER_KEY = "MASTER_KEY"
 private const val CLIPBOARD_WARNING = "CLIPBOARD_WARNING"
 private const val FP_SUPPORTED = "FP_SUPPORTED"
 private const val PWNED_CHECK = "PWNED_CHECK"
+private const val LOCK_RESUME = "LOCK_RESUME"
+private const val DEVELOPER_OPTIONS = "DEV_OPTIONS"
+private const val DELAY_ACTIONS = "DELAY_ACTIONS"
 private const val fileName = "mouse.prefs"
 
 /**
@@ -117,6 +120,36 @@ class MousePreferences(application: Application) {
                 .putString(PWNED_CHECK, date.format(DateTimeFormatter.ISO_DATE_TIME))
                 .apply()
         return this
+    }
+
+    fun setLockOnResume(enabled: Boolean) {
+        preferences.edit()
+                .putBoolean(LOCK_RESUME, enabled)
+                .apply()
+    }
+
+    fun setDeveloperOptions(enabled: Boolean) {
+        preferences.edit()
+                .putBoolean(DEVELOPER_OPTIONS, enabled)
+                .apply()
+    }
+
+    fun setDelayActions(enabled: Boolean) {
+        preferences.edit()
+                .putBoolean(DELAY_ACTIONS, enabled)
+                .apply()
+    }
+
+    fun lockOnresume(): Boolean {
+        return preferences.getBoolean(LOCK_RESUME, true)
+    }
+
+    fun developerOptions(): Boolean {
+        return preferences.getBoolean(DEVELOPER_OPTIONS, false)
+    }
+
+    fun delayedActions(): Boolean {
+        return preferences.getBoolean(DELAY_ACTIONS, true)
     }
 
     fun lastPwnedCheck(): ZonedDateTime {

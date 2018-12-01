@@ -7,13 +7,13 @@ import android.os.Handler
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.codingchili.mouse.enigma.R
-import com.codingchili.mouse.enigma.model.Credential
+import com.codingchili.mouse.enigma.model.MousePreferences
 
 /**
  * Dialog to delete a credential.
  */
 class DialogDelayedPositiveButton : DialogFragment() {
-    val actionBlockMS = 4000L
+    private val actionBlockMS = 4000L
     var positiveText : Int = 0
     var negativeText: Int = 0
     var message: Int = 0
@@ -21,10 +21,14 @@ class DialogDelayedPositiveButton : DialogFragment() {
     lateinit var positiveHandler: () -> Unit
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val preferences = MousePreferences(activity!!.application)
+        val block = if (preferences.delayedActions()) actionBlockMS else 1
+        val blocked = if (preferences.delayedActions()) " (${block / 1000})" else ""
+
         return activity?.let { context ->
             val builder = AlertDialog.Builder(context)
                     .setMessage(message)
-                    .setPositiveButton(positiveText) { _, _ -> positiveHandler.invoke() }
+                    .setPositiveButton("${getString(positiveText)}$blocked") { _, _ -> positiveHandler.invoke() }
                     .setNegativeButton(negativeText) { _, _ -> negativeHandler.invoke() }
 
             val dialog = builder.create()
@@ -36,7 +40,7 @@ class DialogDelayedPositiveButton : DialogFragment() {
                 Handler().postDelayed({
                     button.setTextColor(context.getColor(R.color.accent))
                     button.isEnabled = true
-                }, actionBlockMS)
+                }, block)
             }
             dialog
         } ?: throw IllegalStateException("Activity cannot be null")

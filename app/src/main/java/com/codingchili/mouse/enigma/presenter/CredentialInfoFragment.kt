@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -90,7 +89,7 @@ class CredentialInfoFragment : Fragment() {
                         credential.domain))
 
         val list = view.findViewById<ListView>(R.id.breach_list)
-        val adapter = object : ArrayAdapter<PwnedSite>(activity?.applicationContext!!, R.layout.list_item_credential, credential.pwns) {
+        val adapter = object : ArrayAdapter<PwnedSite>(activity?.applicationContext!!, R.layout.list_item_credential, CredentialBank.pwnsByDomain(credential.domain)) {
 
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
                 var item: View? = convertView
@@ -98,11 +97,12 @@ class CredentialInfoFragment : Fragment() {
                     item = layoutInflater.inflate(R.layout.list_domain_pwn, parent, false) as View
                 }
 
-                val pwn = credential.pwns[position]
                 val header = item!!.findViewById<TextView>(R.id.breach_header)
                 val description = item.findViewById<TextView>(R.id.breach_description)
 
-                header.text = String.format(header.text.toString(), pwn!!.discovered)
+                val pwn = CredentialBank.pwnsByDomain(credential.domain)[position]
+
+                header.text = String.format(header.text.toString(), pwn.discovered)
                 description.text = Html.fromHtml(pwn.description, Html.FROM_HTML_MODE_COMPACT)
 
                 if (!pwn.acknowledged) {

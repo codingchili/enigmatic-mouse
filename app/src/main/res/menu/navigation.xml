@@ -4,14 +4,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/app_bar_fav"
-        android:title="@string/menu_rate"
+        android:id="@+id/navigation_rate"
+        android:title="@string/navigation_rate"
         android:icon="@drawable/baseline_grade_24"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/app_bar_settings"
-        android:title="@string/menu_info"
+        android:id="@+id/navigation_settings"
+        android:title="@string/navigation_settings"
+        android:icon="@drawable/baseline_settings_black_24"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/navigation_info"
+        android:title="@string/navigation_info"
         android:icon="@drawable/baseline_info_24"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/navigation_website"
+        android:title="@string/navigation_website"
+        android:icon="@drawable/baseline_open_in_browser_24"
         app:showAsAction="never"/>
 
 </menu>

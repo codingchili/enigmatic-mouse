@@ -94,6 +94,7 @@ class MasterSetupFragment : Fragment() {
                             activity!!.runOnUiThread {
                                 finish()
                             }
+                            CredentialBank.onPasswordAuthenticate()
                         } else {
                             onAuthenticationFailed()
                         }
@@ -128,6 +129,7 @@ class MasterSetupFragment : Fragment() {
                         hideKeyboard()
                         if (preferences.isKeyInstalled()) {
                             CredentialBank.decryptMasterKeyWithFingerprint()
+                            CredentialBank.onFingerprintAuthenticated()
                             finish()
                         } else {
                             install(true)
