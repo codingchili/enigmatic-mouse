@@ -18,7 +18,7 @@ private const val API = "https://haveibeenpwned.com/api/v2/breaches"
 class PwnedChecker(application: Application) {
     private var preferences = MousePreferences(application)
 
-    fun check(sites: List<String>, callback: (Map<String, PwnedSite>) -> Unit, error: (Throwable) -> Unit) {
+    fun check(sites: List<String>, callback: (Map<String, List<PwnedSite>>) -> Unit, error: (Throwable) -> Unit) {
         val client = AsyncHttpClient()
         val params = RequestParams()
 
@@ -27,22 +27,20 @@ class PwnedChecker(application: Application) {
 
                 override fun onSuccess(statusCode: Int, headers: Array<out Header>?, responseBody: ByteArray?) {
                     if (responseBody != null) {
-                        val lastCheck = preferences.lastPwnedCheck()
-                        val pwned = HashMap<String, PwnedSite>(sites.size)
+                        val pwned = HashMap<String, ArrayList<PwnedSite>>(sites.size)
                         val json = JSONArray(String(responseBody))
                         val add = { site: PwnedSite ->
                             if (sites.contains(site.domain)) {
-                                pwned[site.domain] = site
+                                pwned.computeIfAbsent(site.domain) { ArrayList() }
+                                pwned[site.domain]!!.add(site)
                             }
                         }
 
                         for (index in 0 until json.length()) {
                             val site = PwnedSite(json.getJSONObject(index))
 
-                            if (site.added.isAfter(lastCheck)) {
-                                add.invoke(site)
-                                Log.w("PwnedChecker", "Detected breach on domain: " + site.domain)
-                            }
+                            add.invoke(site)
+                            Log.w("PwnedChecker", "Detected breach on domain: " + site.domain)
                         }
                         preferences.setLastPwnedCheck(ZonedDateTime.now())
                         callback.invoke(pwned)

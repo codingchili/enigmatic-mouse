@@ -9,26 +9,22 @@ import android.os.Bundle
 import android.text.Html
 import android.util.Log
 import android.view.*
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.codingchili.mouse.enigma.R
-import com.codingchili.mouse.enigma.model.Credential
-import com.codingchili.mouse.enigma.model.FaviconLoader
-import com.codingchili.mouse.enigma.model.MousePreferences
+import com.codingchili.mouse.enigma.model.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 /**
  * Fragment that shows information about a single credential.
  */
-class CredentialInfoFragment: Fragment() {
-    private lateinit var credential : Credential
+class CredentialInfoFragment : Fragment() {
+    private lateinit var credential: Credential
 
-    override fun onCreate(savedInstanceState: Bundle?){
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
@@ -42,8 +38,8 @@ class CredentialInfoFragment: Fragment() {
         inflater!!.inflate(R.menu.credential_info, menu)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState:Bundle?): View?{
-        val view: View = inflater.inflate(R.layout.fragment_credential_info, container,false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view: View = inflater.inflate(R.layout.fragment_credential_info, container, false)
 
         val toolbar = view.findViewById<Toolbar>(R.id.bottom_app_bar)
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
@@ -80,7 +76,6 @@ class CredentialInfoFragment: Fragment() {
         }
 
         view.findViewById<FloatingActionButton>(R.id.remove_credential).setOnClickListener {
-            Log.w("wow", "HEY HEY CANCEL THIS !")
             FragmentSelector.removeCredentialDialog(credential)
         }
 
@@ -94,17 +89,39 @@ class CredentialInfoFragment: Fragment() {
                         credential.username,
                         credential.domain))
 
-        if (credential.pwned) {
-            view.findViewById<TextView>(R.id.breach_info).text = Html.fromHtml(credential.pwnedDescription, Html.FROM_HTML_MODE_COMPACT)
-            val header = view.findViewById<TextView>(R.id.breach_header)
+        val list = view.findViewById<ListView>(R.id.breach_list)
+        val adapter = object : ArrayAdapter<PwnedSite>(activity?.applicationContext!!, R.layout.list_item_credential, credential.pwns) {
 
-            header.text = String.format(header.text.toString(), credential.pwnedAt)
-            header.setOnClickListener {
-                //FragmentSelector.dismissBreachWarning()
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
+                var item: View? = convertView
+                if (convertView == null) {
+                    item = layoutInflater.inflate(R.layout.list_domain_pwn, parent, false) as View
+                }
+
+                val pwn = credential.pwns[position]
+                val header = item!!.findViewById<TextView>(R.id.breach_header)
+                val description = item.findViewById<TextView>(R.id.breach_description)
+
+                header.text = String.format(header.text.toString(), pwn!!.discovered)
+                description.text = Html.fromHtml(pwn.description, Html.FROM_HTML_MODE_COMPACT)
+
+                if (!pwn.acknowledged) {
+                    header.setTextColor(context.getColor(R.color.accent))
+                } else {
+                    header.setTextColor(context.getColor(R.color.text))
+                }
+
+                item.setOnClickListener {
+                    pwn.acknowledged = true
+                    CredentialBank.store(credential)
+                    Toast.makeText(context, getString(R.string.credential_unmark_pwned), Toast.LENGTH_SHORT).show()
+                    notifyDataSetChanged()
+                }
+                return item
             }
-        } else {
-            view.findViewById<View>(R.id.breach_layout).visibility = View.GONE
         }
+
+        list.adapter = adapter
 
         FaviconLoader(activity!!.applicationContext).get(credential.domain, { bitmap ->
             view.findViewById<ImageView>(R.id.logo).setImageBitmap(bitmap)
@@ -116,7 +133,7 @@ class CredentialInfoFragment: Fragment() {
     }
 
     private fun copyToClipboard(text: String) {
-        val clipboard : ClipboardManager? = (context!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
+        val clipboard: ClipboardManager? = (context!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
         if (clipboard != null) {
             val clip = ClipData.newPlainText("pwd", text)
             clipboard.primaryClip = clip

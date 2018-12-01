@@ -19,8 +19,7 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
         super.onActivityCreated(savedInstanceState)
         val nav: NavigationView = view?.findViewById(R.id.navigation_view)!!
 
-        nav.setNavigationItemSelectedListener { item ->
-            // when..
+        nav.setNavigationItemSelectedListener {
             FragmentSelector.remove(this)
             true
         }
