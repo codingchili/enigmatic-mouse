@@ -20,8 +20,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    android:paddingBottom="8dp"
-    android:paddingTop="8dp"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp"
     android:clickable="true"
     android:minHeight="?attr/listPreferredItemHeight">
 
@@ -30,7 +30,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
         android:text="Security breach - 2018-11-01"
         android:textAlignment="center"
         android:textAppearance="?attr/textAppearanceListItem"
@@ -43,7 +42,7 @@
         android:layout_below="@+id/breach_header"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="46dp"
+        android:layout_marginTop="32dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:text="website.com"

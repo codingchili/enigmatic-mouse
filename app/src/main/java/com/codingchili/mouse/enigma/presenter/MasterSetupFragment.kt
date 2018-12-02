@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import androidx.fragment.app.Fragment
 import com.codingchili.mouse.enigma.R
+import com.codingchili.mouse.enigma.model.AuditLogger
 import com.codingchili.mouse.enigma.model.CredentialBank
 import com.codingchili.mouse.enigma.model.MousePreferences
 import com.google.android.material.textfield.TextInputEditText
@@ -90,11 +91,11 @@ class MasterSetupFragment : Fragment() {
                     subheading.text = getString(R.string.master_crypto_verifying)
                     animatedFeedback()
                     AsyncTask.execute {
-                        if (CredentialBank.unlockWithPassword(password.text.toString())) {
-                            activity!!.runOnUiThread {
-                                finish()
-                            }
-                            CredentialBank.onPasswordAuthenticate()
+                        CredentialBank.unlockWithPassword(password.text.toString())
+
+                        if (CredentialBank.connect()) {
+                            finish()
+                            AuditLogger.onPasswordAuthenticate(context!!)
                         } else {
                             onAuthenticationFailed()
                         }
@@ -107,8 +108,9 @@ class MasterSetupFragment : Fragment() {
     }
 
     private fun finish() {
-        hideKeyboard()
-        FragmentSelector.list()
+        activity!!.runOnUiThread {
+            FragmentSelector.list()
+        }
     }
 
     private fun hideKeyboard() {
@@ -128,9 +130,15 @@ class MasterSetupFragment : Fragment() {
                     override fun onAuthenticationSucceeded(result: FingerprintManagerCompat.AuthenticationResult?) {
                         hideKeyboard()
                         if (preferences.isKeyInstalled()) {
-                            CredentialBank.decryptMasterKeyWithFingerprint()
-                            CredentialBank.onFingerprintAuthenticated()
-                            finish()
+                            AsyncTask.execute {
+                                CredentialBank.unlockWithFingerprint()
+                                if (CredentialBank.connect()) {
+                                    AuditLogger.onFingerprintAuthenticated(context!!)
+                                    finish()
+                                } else {
+                                    onAuthenticationFailed()
+                                }
+                            }
                         } else {
                             install(true)
                         }
@@ -156,6 +164,7 @@ class MasterSetupFragment : Fragment() {
                 CredentialBank.installWithPassword(password.text.toString())
             }
 
+            CredentialBank.connect()
             activity!!.runOnUiThread {
                 finish()
             }
@@ -203,8 +212,8 @@ class MasterSetupFragment : Fragment() {
     }
 
     private fun animatedFeedback() {
-        val animation = RotateAnimation(0.0f,
-                360.0f,
+        val animation = RotateAnimation(360.0f,
+                0.0f,
                 Animation.RELATIVE_TO_SELF,
                 0.5f,
                 Animation.RELATIVE_TO_SELF,

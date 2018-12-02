@@ -53,6 +53,7 @@ class CredentialInfoFragment : Fragment() {
                 R.id.copy -> {
                     val preferences = MousePreferences(activity!!.application)
 
+                    AuditLogger.onCopiedToClipboard(context!!, credential)
                     if (preferences.isClipboardWarningShown()) {
                         copyToClipboard(credential.password) // todo: expire clipboard?
                     } else {
@@ -64,6 +65,7 @@ class CredentialInfoFragment : Fragment() {
                 }
                 R.id.show -> {
                     Toast.makeText(context, credential.password, Toast.LENGTH_SHORT).show()
+                    AuditLogger.onPasswordDisplayed(context!!, credential)
                 }
                 R.id.launch -> {
                     val intent = Intent(Intent.ACTION_VIEW)
@@ -76,6 +78,7 @@ class CredentialInfoFragment : Fragment() {
 
         view.findViewById<FloatingActionButton>(R.id.remove_credential).setOnClickListener {
             FragmentSelector.removeCredentialDialog(credential)
+            AuditLogger.onRemovedCredential(context!!, credential)
         }
 
         view.findViewById<View>(R.id.cancel).setOnClickListener {
@@ -112,7 +115,7 @@ class CredentialInfoFragment : Fragment() {
                 }
 
                 item.setOnClickListener {
-                    pwn.acknowledged = true
+                    CredentialBank.acknowledge(pwn)
                     CredentialBank.store(credential)
                     Toast.makeText(context, getString(R.string.credential_unmark_pwned), Toast.LENGTH_SHORT).show()
                     notifyDataSetChanged()

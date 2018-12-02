@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient">
 
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="64dp">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="64dp">
 
         <TextView
             android:id="@+id/security_list_header"
@@ -29,8 +31,8 @@
             android:id="@+id/fingerprint_security_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_alignTop="@id/security_list_header"
+            android:layout_alignParentStart="true"
             android:layout_marginTop="32dp"
             android:text="Fingerprint security" />
 
@@ -47,8 +49,8 @@
             android:id="@+id/lock_on_resume_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_alignTop="@id/fingerprint_security_status"
+            android:layout_alignParentStart="true"
             android:layout_marginTop="36dp"
             android:text="Lock on resume" />
 
@@ -64,8 +66,8 @@
             android:id="@+id/developer_options_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_alignTop="@id/lock_on_resume_header"
+            android:layout_alignParentStart="true"
             android:layout_marginTop="32dp"
             android:text="Enable developer actions" />
 
@@ -73,16 +75,16 @@
             android:id="@+id/developer_options"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@id/lock_on_resume"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="32dp"
-            android:layout_alignTop="@id/lock_on_resume"/>
+            android:layout_marginTop="32dp" />
 
         <TextView
             android:id="@+id/delay_sensitive_operations_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_alignTop="@id/developer_options_header"
+            android:layout_alignParentStart="true"
             android:layout_marginTop="32dp"
             android:text="Delay sensitive operations" />
 
@@ -90,41 +92,52 @@
             android:id="@+id/delay_sensitive_operations"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_alignTop="@id/developer_options"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="32dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/container"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="76dp">
 
         <TextView
             android:id="@+id/log_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/developer_options"
-            android:layout_marginTop="76dp"
             android:text="Audit Log"
+            android:layout_marginLeft="4dp"
             android:textStyle="bold" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="16dp"
-            android:layout_alignTop="@+id/log_header">
+            android:layout_marginTop="32dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/audit_log"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/app_info_string" />
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:text="@string/app_info_string"
+                    android:textSize="12sp" />
             </LinearLayout>
         </ScrollView>
-
     </RelativeLayout>
+
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/bottom_app_bar_layout"
@@ -168,9 +181,9 @@
         android:id="@+id/fragment_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_marginTop="16dp"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
+        android:layout_marginTop="16dp"
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/baseline_security_24" />
 

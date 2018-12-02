@@ -1,6 +1,5 @@
 package com.codingchili.mouse.enigma.presenter
 
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -8,10 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.codingchili.mouse.enigma.R
-import com.codingchili.mouse.enigma.model.Credential
-import com.codingchili.mouse.enigma.model.CredentialBank
-import com.codingchili.mouse.enigma.model.FaviconLoader
-import com.codingchili.mouse.enigma.model.PwnedChecker
+import com.codingchili.mouse.enigma.model.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -20,17 +16,10 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class CredentialListFragment : Fragment() {
     private lateinit var adapter: ArrayAdapter<Credential>
-    private lateinit var icons: FaviconLoader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        icons = FaviconLoader(context!!)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        adapter.notifyDataSetChanged()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -42,6 +31,8 @@ class CredentialListFragment : Fragment() {
     }
 
     private fun performLogoClear() {
+        val icons = FaviconLoader(context!!)
+
         icons.clear()
         CredentialBank.onCacheUpdated()
         Toast.makeText(activity?.applicationContext, getString(R.string.icons_reloading), Toast.LENGTH_SHORT).show()
@@ -78,9 +69,13 @@ class CredentialListFragment : Fragment() {
 
             CredentialBank.setPwnedList(pwned)
 
+
             activity!!.runOnUiThread {
+                adapter.notifyDataSetChanged()
                 Toast.makeText(activity, getString(R.string.pwned_list_updated), Toast.LENGTH_SHORT).show()
             }
+
+            AuditLogger.onPwnedListUpdated(activity.applicationContext)
 
         }, {
             Toast.makeText(activity, R.string.pwned_check_error, Toast.LENGTH_LONG).show()
@@ -88,7 +83,6 @@ class CredentialListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setHasOptionsMenu(true)
         val toolbar = view.findViewById<Toolbar>(R.id.bottom_app_bar)
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
 
@@ -113,7 +107,6 @@ class CredentialListFragment : Fragment() {
             true
         }
 
-        super.onViewCreated(view, savedInstanceState)
 
         val button = view.findViewById<FloatingActionButton>(R.id.add_pw)
 
@@ -122,6 +115,7 @@ class CredentialListFragment : Fragment() {
             FragmentSelector.addCredential()
         }
 
+        val icons = FaviconLoader(context!!)
         val list = view.findViewById<ListView>(R.id.list_pw)
         adapter = object : ArrayAdapter<Credential>(activity?.applicationContext!!, R.layout.list_item_credential, CredentialBank.retrieve()) {
 
@@ -133,7 +127,7 @@ class CredentialListFragment : Fragment() {
 
                 val imageView: ImageView = item?.findViewById(R.id.site_logo) as ImageView
 
-                FaviconLoader(context).get(CredentialBank.retrieve()[position].domain, { bitmap ->
+                icons.get(CredentialBank.retrieve()[position].domain, { bitmap ->
                     imageView.setImageBitmap(bitmap)
                 }, {
                     // image not loaded to cache - unload current.

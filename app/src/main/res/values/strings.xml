@@ -48,7 +48,7 @@
     <string name="credential_header">%1$s@%2$s</string>
     <string name="info_close">Close</string>
     <string name="launch_website">Open browser</string>
-    <string name="show_password">show_password</string>
+    <string name="show_password">Show password</string>
     <string name="copy_clipboard">Copy</string>
 
     <!-- fragment app info -->
@@ -76,5 +76,14 @@
     <string name="clipboard_warning_heeded">A wise decision, indeed.</string>
     <string name="fp_enabled">enabled</string>
     <string name="fp_not_enabled">disabled</string>
+
+    <!-- audit logging -->
+    <string name="audit_fingerprint_authenticated">Authenticated using fingerprint.</string>
+    <string name="audit_password_authenticated">Authenticated using password.</string>
+    <string name="audit_security_list_update">Updated security lists.</string>
+    <string name="audit_displayed_password">Displayed password for %1$s@%2$s.</string>
+    <string name="audit_coped_password">Password clipboard copy %1$s@%2$s.</string>
+    <string name="audit_added_credential">Added credential %1$s@%2$s.</string>
+    <string name="audit_removed_credential">Removed credential %1$s@%2$s.</string>
 
 </resources>

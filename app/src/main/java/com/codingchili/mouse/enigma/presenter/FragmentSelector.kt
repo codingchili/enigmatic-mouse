@@ -98,8 +98,8 @@ object FragmentSelector {
         val dialog = DialogDelayedPositiveButton()
         dialog.message = message
         dialog.positiveText = positiveText
-        dialog.negativeText= negativeText
-        dialog.positiveHandler= positiveHandler
+        dialog.negativeText = negativeText
+        dialog.positiveHandler = positiveHandler
         dialog.negativeHandler = negativeHandler
         dialog.show(manager, "dialog")
     }

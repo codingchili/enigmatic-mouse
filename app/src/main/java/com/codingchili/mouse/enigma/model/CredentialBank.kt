@@ -5,12 +5,12 @@ import android.security.keystore.KeyProperties
 import android.util.Log
 import io.realm.Realm
 import io.realm.RealmConfiguration
-import io.realm.exceptions.RealmFileException
 import org.spongycastle.crypto.generators.SCrypt
 import java.security.KeyStore
 import java.security.SecureRandom
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.spec.IvParameterSpec
@@ -27,19 +27,19 @@ object CredentialBank {
     private const val MAX_LOG_BUFFER = 256
     private const val SALT_BYTES = 32
     private const val KDF_OUTPUT_BYTES = 64
-    private const val REALM_SCHEMA_VERSION = 10L
+    private const val REALM_SCHEMA_VERSION = 13L
     private const val REALM_NAME = "credentials_$REALM_SCHEMA_VERSION" // skip migration support for now.
 
     private val keyGenerator: KeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE)
     private val keyStore: KeyStore = KeyStore.getInstance(KEYSTORE)
     private val listeners = ArrayList<() -> Unit>()
     private val random = SecureRandom()
-    private var cache : MutableList<Credential> = ArrayList()
+    private var cache: MutableList<Credential> = ArrayList()
     private var vault: Vault = Vault()
 
     private lateinit var cipher: Cipher
     private lateinit var preferences: MousePreferences
-    private lateinit var realm : Realm
+    private lateinit var key: ByteArray
 
     fun initCipher(encrypt: Boolean) {
         cipher = Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
@@ -82,57 +82,39 @@ object CredentialBank {
     }
 
     private fun generateKDFKey(secret: ByteArray, salt: ByteArray): ByteArray {
-        val start = System.currentTimeMillis()
-        val bytes = SCrypt.generate(secret, salt, ITERATIONS, 8, 1, KDF_OUTPUT_BYTES)
+        var bytes = ByteArray(0)
 
-        Log.w(javaClass.name, "Generated derived key in " + (System.currentTimeMillis() - start) + "ms")
+        Performance("CredentialBank:generateKey").sync({
+            bytes = SCrypt.generate(secret, salt, ITERATIONS, 8, 1, KDF_OUTPUT_BYTES)
+        })
         return bytes
     }
 
     fun store(credential: Credential) {
         cache.remove(credential)
         cache.add(credential)
-
-        realm.beginTransaction()
-        vault.credentials.clear()
-        vault.credentials.addAll(cache)
-        realm.copyToRealmOrUpdate(vault)
-        realm.commitTransaction()
-
         sortCache()
         onCacheUpdated()
-    }
 
-    private fun save() {
-        realm.beginTransaction()
-        realm.copyToRealmOrUpdate(vault)
-        realm.commitTransaction()
-    }
-
-    fun onFingerprintAuthenticated() {
-        log("Authenticated using fingerprint.")
+        vault.credentials.remove(credential)
+        vault.credentials.add(credential)
+        save()
     }
 
     fun auditLog(): List<String> {
         return vault.log
     }
 
-    fun onPasswordAuthenticate() {
-        log("Authenticated using password.")
-    }
-
-    private fun log(line: String) {
+    fun log(line: String) {
         val timestamp: String = ZonedDateTime.now()
+                .truncatedTo(ChronoUnit.SECONDS)
                 .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
-        if (vault.log.size > MAX_LOG_BUFFER) {
-            vault.log.removeAt(vault.log.size -1)
-        }
-
-
-        realm.beginTransaction()
         vault.log.add(0, "$timestamp: $line")
-        realm.commitTransaction()
+
+        if (vault.log.size > MAX_LOG_BUFFER) {
+            vault.log.removeAt(vault.log.size - 1)
+        }
 
         save()
     }
@@ -143,14 +125,15 @@ object CredentialBank {
 
     fun remove(credential: Credential) {
         cache.remove(credential)
-
-        realm.beginTransaction()
-        realm.where(credential.javaClass).equalTo("id", credential.id)
-                .findAll()
-                .deleteAllFromRealm()
-        realm.commitTransaction()
-
         onCacheUpdated()
+
+        Realm.getDefaultInstance().use {
+            it.executeTransactionAsync { realm ->
+                realm.where(credential.javaClass).equalTo(ID_FIELD, credential.id)
+                        .findAll()
+                        .deleteAllFromRealm()
+            }
+        }
     }
 
     private fun sortCache() {
@@ -173,34 +156,44 @@ object CredentialBank {
         this.preferences = preferences
     }
 
-    fun decryptMasterKeyWithFingerprint() {
-        val decryptedKey = cipher.doFinal(preferences.getEncryptedMaster())
-        configureRealm(decryptedKey)
-    }
-
-    private fun configureRealm(key: ByteArray) {
+    /**
+     * Connect to the realm instance - requires calling any of the install
+     * or unlock methods first. Must be called from the UI thread.
+     */
+    fun connect(): Boolean {
         Realm.setDefaultConfiguration(RealmConfiguration.Builder()
                 .encryptionKey(key)
                 .schemaVersion(REALM_SCHEMA_VERSION)
                 .name(REALM_NAME)
                 .build())
+        try {
+            cache.clear()
 
-        cache.clear()
+            Realm.getDefaultInstance().use {
+                val found = it.where(Vault::class.java)
+                        .equalTo(
+                                NAME_FIELD,
+                                DEFAULT_NAME)
+                        .findFirst()
 
-        realm = Realm.getDefaultInstance()
-        realm.where(Vault::class.java).findAll().forEach { vault ->
-            this.vault = vault
+                if (found == null) {
+                    vault = Vault()
+                } else {
+                    this.vault = it.copyFromRealm(found)
+                }
 
-            this.vault.credentials.forEach { credential ->
-                // todo: should be managed?
-                cache.add(realm.copyFromRealm(credential))
+                cache.addAll(vault.credentials)
             }
+            sortCache()
+            return true
+        } catch (e: Exception) {
+            Log.wtf(javaClass.name, e)
+            return false
         }
-        sortCache()
     }
 
     fun installWithFingerprint(password: String) {
-        val key = installWithPassword(password)
+        installWithPassword(password)
 
         val spec = SecretKeySpec(key, "AES")
         val encryptedKey = cipher.doFinal(spec.encoded)
@@ -210,30 +203,21 @@ object CredentialBank {
                 .setFPSupported(true)
     }
 
-    fun installWithPassword(password: String): ByteArray {
+    fun installWithPassword(password: String) {
         val salt = CredentialBank.generateSalt()
-        val key = CredentialBank.generateKDFKey(password.toByteArray(), salt)
-
-        configureRealm(key)
+        key = CredentialBank.generateKDFKey(password.toByteArray(), salt)
 
         preferences.setMasterSalt(salt)
                 .setFPSupported(false)
                 .setInstalled()
-
-        return key
     }
 
-    fun unlockWithPassword(password: String): Boolean {
-        return try {
-            configureRealm(generateKDFKey(password.toByteArray(), preferences.getMasterSalt()))
-            true
-        } catch (e: RealmFileException) {
-            if (e.kind == RealmFileException.Kind.ACCESS_ERROR) {
-                false
-            } else {
-                throw e
-            }
-        }
+    fun unlockWithFingerprint() {
+        key = cipher.doFinal(preferences.getEncryptedMaster())
+    }
+
+    fun unlockWithPassword(password: String) {
+        key = generateKDFKey(password.toByteArray(), preferences.getMasterSalt())
     }
 
     fun getCipher(): Cipher {
@@ -242,9 +226,10 @@ object CredentialBank {
 
     fun uninstall() {
         preferences.reset()
-        preferences.setClipboardWarned(false)
         try {
-            Realm.deleteRealm(RealmConfiguration.Builder().name(REALM_NAME).build())
+            if (!Realm.deleteRealm(RealmConfiguration.Builder().name(REALM_NAME).build())) {
+                Log.w(javaClass.name, "Failed to delete realm.")
+            }
         } catch (e: Exception) {
             Log.w(javaClass.name, e.message)
         }
@@ -262,12 +247,28 @@ object CredentialBank {
         return matches
     }
 
-    fun setPwnedList(pwned: Map<String, List<PwnedSite>>) {
-        vault.pwned.clear()
 
-        pwned.values.forEach { list ->
-            vault.pwned.addAll(list)
+    private fun save() {
+        Realm.getDefaultInstance().use {it ->
+            it.executeTransactionAsync {
+                it.copyToRealmOrUpdate(vault)
+            }
         }
+    }
+
+    fun setPwnedList(pwned: Map<String, List<PwnedSite>>) {
+        pwned.values.forEach { list ->
+            list.forEach { domain ->
+                if (!vault.pwned.contains(domain)) {
+                    vault.pwned.add(domain)
+                }
+            }
+        }
+        save()
+    }
+
+    fun acknowledge(pwn: PwnedSite) {
+        pwn.acknowledged = true
         save()
     }
 }

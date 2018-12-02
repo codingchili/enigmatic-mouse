@@ -93,6 +93,7 @@ class MousePreferences(application: Application) {
                 .putBoolean(KEY_INSTALLED, false)
                 .putBoolean(FP_SUPPORTED, true)
                 .putString(PWNED_CHECK, null)
+                .putBoolean(CLIPBOARD_WARNING, false)
                 .apply()
         return this
     }

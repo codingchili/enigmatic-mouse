@@ -31,7 +31,9 @@ class FaviconLoader(private val context: Context) {
     }
 
     private fun open() {
-        cache = DiskLruCache.open(context.cacheDir, 3, 1, 512_000_000) // 64MB disk cache.
+        Performance("FaviconLoader:openCache").sync({
+            cache = DiskLruCache.open(context.cacheDir, 3, 1, 512_000_000) // 64MB disk cache.
+        })
     }
 
     /**

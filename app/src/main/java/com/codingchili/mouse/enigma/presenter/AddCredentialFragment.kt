@@ -1,5 +1,6 @@
 package com.codingchili.mouse.enigma.presenter
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,7 +18,9 @@ import org.spongycastle.util.encoders.Hex
 import java.security.SecureRandom
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.inputmethod.InputMethodManager
 import com.codingchili.mouse.enigma.R
+import com.codingchili.mouse.enigma.model.AuditLogger
 
 
 /**
@@ -42,15 +45,27 @@ internal class AddCredentialFragment: Fragment() {
         view.findViewById<ImageView>(R.id.generate).setOnClickListener {
             val generated : String = generate()
             Toast.makeText(context, generated, Toast.LENGTH_SHORT).show()
-            view.findViewById<TextInputEditText>(R.id.password).setText(generated)
+            val password = view.findViewById<TextInputEditText>(R.id.password)
+
+            password.setText(generated)
+
+            if (activity != null) {
+                val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                imm!!.hideSoftInputFromWindow(password.rootView.windowToken, 0)
+            }
         }
 
         view.findViewById<TextInputEditText>(R.id.website).setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
                 val edit : TextInputEditText = v as TextInputEditText
 
+                val activity = activity
                 FaviconLoader(context!!).load(edit.text.toString(), { bitmap ->
                     view.findViewById<ImageView>(R.id.logo).setImageBitmap(bitmap)
+
+                    activity!!.runOnUiThread {
+                        CredentialBank.onCacheUpdated()
+                    }
                 }, { exception ->
                     Log.w("AddCredentialFragment", exception?.message)
                 })
@@ -94,8 +109,10 @@ internal class AddCredentialFragment: Fragment() {
 
             website = website.replace(Regex("https://|http://"), "")
 
-            CredentialBank.store(Credential(website, username, password))
+            val credential = Credential(website, username, password)
+            CredentialBank.store(credential)
             Toast.makeText(super.getContext(), "credentials saved.", Toast.LENGTH_SHORT).show()
+            AuditLogger.onAddedCredential(context!!, credential)
             FragmentSelector.back()
         }
         return view

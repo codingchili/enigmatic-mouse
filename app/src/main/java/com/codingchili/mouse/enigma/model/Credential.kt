@@ -9,6 +9,8 @@ import java.util.*
 /**
  * Data model for Credential information.
  */
+const val ID_FIELD = "id"
+
 open class Credential(): RealmObject() {
 
     constructor(domain: String, username: String, password: String) : this() {

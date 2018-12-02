@@ -30,6 +30,7 @@ class PwnedChecker(application: Application) {
                         val pwned = HashMap<String, ArrayList<PwnedSite>>(sites.size)
                         val json = JSONArray(String(responseBody))
                         val add = { site: PwnedSite ->
+                            // only add pwn info if domain exists - scan needs to be re-run.
                             if (sites.contains(site.domain)) {
                                 pwned.computeIfAbsent(site.domain) { ArrayList() }
                                 pwned[site.domain]!!.add(site)
