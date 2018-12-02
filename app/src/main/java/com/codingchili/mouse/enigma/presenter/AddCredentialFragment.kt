@@ -38,7 +38,6 @@ internal class AddCredentialFragment: Fragment() {
         val view: View = inflater.inflate(R.layout.fragment_add_credential,container,false)
 
         view.findViewById<FloatingActionButton>(R.id.cancel).setOnClickListener {
-            Toast.makeText(context, "cancelled", Toast.LENGTH_SHORT).show()
             FragmentSelector.back()
         }
 
