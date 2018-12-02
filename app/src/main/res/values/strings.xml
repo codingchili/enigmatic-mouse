@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Mouse Enigma</string>
+    <string name="app_version">0.2.0</string>
 
     <!-- navigation menu. -->
     <string name="navigation_rate">Rate</string>
@@ -91,8 +92,8 @@
     <string name="audit_fingerprint_authenticated">Authenticated using fingerprint.</string>
     <string name="audit_password_authenticated">Authenticated using password.</string>
     <string name="audit_security_list_update">Updated security lists.</string>
-    <string name="audit_displayed_password">Displayed password for %1$s@%2$s.</string>
-    <string name="audit_coped_password">Password clipboard copy %1$s@%2$s.</string>
+    <string name="audit_displayed_password">Display password: %1$s@%2$s.</string>
+    <string name="audit_coped_password">Password to clipboard: %1$s@%2$s.</string>
     <string name="audit_added_credential">Added credential %1$s@%2$s.</string>
     <string name="audit_removed_credential">Removed credential %1$s@%2$s.</string>
 

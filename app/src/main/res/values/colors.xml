@@ -10,4 +10,6 @@
     <color name="password_weak">#d50000</color>
     <color name="password_ok">#ffe100</color>
     <color name="password_strong">#64dd17</color>
+
+    <color name="transparent">#00000000</color>
 </resources>
