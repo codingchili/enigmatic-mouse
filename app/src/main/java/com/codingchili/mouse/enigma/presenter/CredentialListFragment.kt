@@ -16,10 +16,12 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class CredentialListFragment : Fragment() {
     private lateinit var adapter: ArrayAdapter<Credential>
+    private lateinit var preferences: MousePreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        preferences = MousePreferences(activity!!.application)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -28,6 +30,8 @@ class CredentialListFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater!!.inflate(R.menu.credential_list, menu)
+
+        menu!!.findItem(R.id.clean_all_dev).isVisible = preferences.developerOptions()
     }
 
     private fun performLogoClear() {
@@ -102,6 +106,9 @@ class CredentialListFragment : Fragment() {
                 }
                 R.id.pwned_checker -> {
                     performPwnedCheck()
+                }
+                R.id.import_credentials -> {
+                    FragmentSelector.import()
                 }
             }
             true

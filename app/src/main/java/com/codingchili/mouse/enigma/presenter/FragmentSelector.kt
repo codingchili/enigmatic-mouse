@@ -56,6 +56,10 @@ object FragmentSelector {
         show(CredentialListFragment(), "list", android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
+    fun import() {
+        show(ImportCredentialFragment(), "import", android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
     private fun show(fragment: Fragment, tag: String) {
         show(fragment, tag, android.R.anim.slide_in_left, android.R.anim.fade_out)
     }

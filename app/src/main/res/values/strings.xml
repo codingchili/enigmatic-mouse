@@ -15,6 +15,8 @@
     <string name="website_url">https://zapperfly-asm.com/</string>
     <string name="app_url">https://google.com/</string>
 
+    <string name="import_menu">Import credential</string>
+
     <!-- fragment: master key setup. -->
     <string name="master_password_header">Setup master password</string>
     <string name="master_password_hint">Master password</string>
@@ -61,6 +63,14 @@
     <string name="pwned_updating_lists">Updating security lists</string>
     <string name="pwned_list_updated">Security lists updated.</string>
     <string name="credential_breached_header">Security breach - %1$s</string>
+
+    <!-- application settings -->
+    <string name="security_list_updated">Security list updated</string>
+    <string name="fingerprint_security_header">Fingerprint security</string>
+    <string name="lock_on_resume">Lock on resume</string>
+    <string name="delay_sensitive_operations">Delay sensitive operations</string>
+    <string name="enable_developer_actions">Enable developer actions</string>
+    <string name="audit_log">Audit Log</string>
 
     <!-- dialog delete -->
     <string name="delete_credential">This will irrevocably remove this credential from your device.</string>

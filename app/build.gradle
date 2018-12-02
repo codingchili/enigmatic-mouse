@@ -49,6 +49,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha01'
     implementation 'com.loopj.android:android-async-http:1.4.9'
 
+    implementation 'com.google.zxing:core:3.3.3'
+    implementation 'com.google.zxing:android-core:3.3.0'
+
+
     testImplementation 'junit:junit:4.12'
 }
 repositories {
