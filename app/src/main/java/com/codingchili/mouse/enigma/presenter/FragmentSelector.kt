@@ -17,6 +17,8 @@ object FragmentSelector {
     private lateinit var activity: AppCompatActivity
 
     fun master() {
+        manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
         manager.beginTransaction()
                 .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                 .replace(R.id.root, MasterSetupFragment())

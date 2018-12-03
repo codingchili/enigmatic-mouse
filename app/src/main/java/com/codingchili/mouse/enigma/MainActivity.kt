@@ -12,6 +12,7 @@ import java.security.Security
  */
 class MainActivity : AppCompatActivity() {
     private lateinit var preferences: MousePreferences
+    private var resumed = false
 
     init {
         Security.insertProviderAt(org.spongycastle.jce.provider.BouncyCastleProvider(), 1)
@@ -24,16 +25,20 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.bottom_app_bar))
 
         FragmentSelector.init(this)
-        FragmentSelector.master()
 
         preferences = MousePreferences(application)
     }
 
     override fun onResume() {
-        if (preferences.lockOnresume()) {
+        if (!resumed || (resumed && preferences.lockOnresume())) {
             FragmentSelector.master()
         }
         super.onResume()
+    }
+
+    override fun onPause() {
+        resumed = true
+        super.onPause()
     }
 
     override fun onBackPressed() {
