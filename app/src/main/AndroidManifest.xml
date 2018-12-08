@@ -27,6 +27,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="com.codingchili.mouse.enigma.autofill.AutoService"
+            android:label="@string/autofill_name"
+            android:permission="android.permission.BIND_AUTOFILL_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.autofill.AutofillService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.autofill"
+                android:resource="@xml/autofill" />
+
+            <!--<meta-data android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version" />-->
+        </service>
     </application>
 
 </manifest>

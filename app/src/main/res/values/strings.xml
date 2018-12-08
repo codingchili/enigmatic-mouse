@@ -96,5 +96,6 @@
     <string name="audit_coped_password">Password to clipboard: %1$s@%2$s.</string>
     <string name="audit_added_credential">Added credential %1$s@%2$s.</string>
     <string name="audit_removed_credential">Removed credential %1$s@%2$s.</string>
+    <string name="autofill_name">Autofill by Mouse</string>
 
 </resources>
