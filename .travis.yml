@@ -10,6 +10,9 @@ android:
     - extra-google-m2repository
     - extra-android-m2repository
     - extra-android-support
+before_install:
+- mkdir "$ANDROID_HOME/licenses" || true
+- cp ./licenses/* "$ANDROID_HOME/licenses/"
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
