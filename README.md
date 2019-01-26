@@ -1,6 +1,8 @@
 # enigmatic-mouse
 The enigmatic mouse will keep your passwords safe - password manager on Android written in Kotlin.
 
+ View the [YouTube Demo](https://www.youtube.com/watch?v=CcIvlFmBL5w).
+
 ![mouse enigma preview](https://raw.githubusercontent.com/codingchili/enigmatic-mouse/master/preview.jpg "Current snapshot version")
 
 Password manager in 1500 lines of KOTLIN!
