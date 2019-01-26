@@ -20,6 +20,7 @@ Requires SDK26 (can probably be built with lower API levels too.)
 - shows icons for the sites you add from the internet.
 - allows you to copy to clipboard or view passwords within the app.
 - set a credential as favorite and sticky it to the top of the list.
+- downloads the haveibeenpwned domain list and compares with your accounts.
 
 # Security
 The encryption scheme
@@ -56,8 +57,8 @@ The Internet permission is used to download icons from websites. For example
 if you add a credential for youtube.com -> we will fetch the index page from 
 youtube and parse any `<link rel="icon" href="..."` elements and select the 
 biggest available icon. If you think Internet permissions is scary in your password
-manager you can remove it. We are only using it to download icons to make the UI
-a bit prettier.
+manager you can remove it. The feature to check if a site has been hacked also
+depends on this permission "security lists".
 
 # Building
 Open the project in Android Studio, Build -> Make Project.
