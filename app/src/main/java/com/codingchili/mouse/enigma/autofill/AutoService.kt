@@ -14,7 +14,7 @@ import android.util.MutableInt
 
 
 /**
- * Autofill service. wow.
+ * Autofill service: work in progress.
  */
 class AutoService: AutofillService() {
 

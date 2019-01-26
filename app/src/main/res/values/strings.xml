@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Mouse Enigma</string>
-    <string name="app_version">0.2.0</string>
+    <string name="app_name">Enigmatic Mouse</string>
+    <string name="app_version">1.0.0</string>
 
     <!-- navigation menu. -->
     <string name="navigation_rate">Rate</string>
@@ -13,8 +13,8 @@
     <string name="icons_reloading">Reloading icons</string>
     <string name="icons_reloaded">Icons reloaded</string>
     <string name="navigation_website">Show website</string>
-    <string name="website_url">https://zapperfly-asm.com/</string>
-    <string name="app_url">https://google.com/</string>
+    <string name="website_url">https://enigmatic-mouse.com/</string>
+    <string name="app_url">https://play.google.com/store/search?q=enigmatic%20mouse</string>
 
     <string name="import_menu">Import credential</string>
 

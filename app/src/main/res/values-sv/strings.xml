@@ -1,0 +1,100 @@
+<resources>
+    <string name="app_name">Gåtfulle Musen</string>
+    <string name="app_version">1.0.0</string>
+
+    <!-- navigation menu. -->
+    <string name="navigation_rate">Betyg</string>
+    <string name="navigation_info">Info</string>
+    <string name="navigation_settings">Inställningar</string>
+
+    <!-- credential list menu -->
+    <string name="clear_all_dev">Rensa (Utvecklare)</string>
+    <string name="menu_logo_cache_clear">Ladda ikoner</string>
+    <string name="icons_reloading">Laddar ikoner</string>
+    <string name="icons_reloaded">Ikoner laddade</string>
+    <string name="navigation_website">Webbsida</string>
+    <string name="website_url">https://enigmatic-mouse.com/</string>
+    <string name="app_url">https://play.google.com/store/search?q=enigmatic%20mouse</string>
+
+    <string name="import_menu">Importera</string>
+
+    <!-- fragment: master key setup. -->
+    <string name="master_password_header">Sätt upp lösenordet</string>
+    <string name="master_password_hint">Ditt lösenord</string>
+    <string name="master_scan_fp_text">Bekräfta med fingeravtryck</string>
+    <string name="fp_title">Skanna fingret</string>
+    <string name="fp_subtitle">Ditt fingeravtryck används för att kryptera lösenordet.</string>
+    <string name="fp_description">Ditt fingeravtryck krävs för att dekryptera lösenordet..</string>
+    <string name="fp_cancel">Avbryt</string>
+    <string name="fp_authenticate">Skanna fingeravtryck för att låsa upp</string>
+    <string name="fp_authenticate_fail">Misslyckades, försök igen.</string>
+    <string name="master_crypto_in_progress">Genererar nycklar..</string>
+    <string name="master_crypto_verifying">Verifierar lösenord..</string>
+    <string name="master_authenticate">Tryck för att autentisera</string>
+
+    <!-- fragment: add credentials. -->
+    <string name="password_generate_tap">Tryck för att generera lösenord</string>
+    <string name="password_weak">Svagt!</string>
+    <string name="password_ok">Hackbart!</string>
+    <string name="password_strong">Starkt!</string>
+    <string name="hint_website">Webbsidans address (exempel.com)</string>
+    <string name="hint_username">Användarnamn</string>
+    <string name="hint_password">Lösenord</string>
+    <string name="credential_save">Spara</string>
+
+    <!-- fragment credential information -->
+    <string name="info_password_showcopy">Kopiera eller visa lösenord</string>
+    <string name="created_at_header">Skapad vid</string>
+    <string name="credential_unmark_pwned">Markerat som läst</string>
+    <string name="clipboard_failed">Kunde inte kopiera</string>
+    <string name="clipboard_success">Kopierat till urklipp</string>
+    <string name="credential_header">%1$s@%2$s</string>
+    <string name="info_close">Stäng</string>
+    <string name="launch_website">Öppna webbsidan</string>
+    <string name="show_password">Visa lösenord</string>
+    <string name="copy_clipboard">Kopiera</string>
+
+    <!-- fragment app info -->
+    <string name="tap_octocat">Peta på octocat för att besöka oss på GitHub</string>
+    <string name="app_info_string"><b>Copyright 2018 Robin Duda</b>\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
+
+    <!-- breach list -->
+    <string name="pwned_check">Kontrollera säkerhetslistor</string>
+    <string name="pwned_check_error">Misslyckades att hämta</string>
+    <string name="pwned_updating_lists">Uppdaterar säkerhetslistor</string>
+    <string name="pwned_list_updated">Listor uppdaterade.</string>
+    <string name="credential_breached_header">Säkerhetsintrång - %1$s</string>
+
+    <!-- application settings -->
+    <string name="security_list_updated">Säkerhetslistan uppdaterad</string>
+    <string name="fingerprint_security_header">Fingeravtrycks-säkerhet</string>
+    <string name="lock_on_resume">Lås i bakgrunden</string>
+    <string name="delay_sensitive_operations">Fördröj vissa val</string>
+    <string name="enable_developer_actions">Tillåt utvecklaralternativ</string>
+    <string name="audit_log">Spårningsloggen</string>
+
+    <!-- dialog delete -->
+    <string name="delete_credential">Du är på väg att ta bort denna uppgift från telefonen. Detta kan inte ångras.</string>
+    <string name="delete_negative">Avbryt</string>
+    <string name="delete_positive">Ta bort!</string>
+    <string name="removed_toaster">Borttagen:</string>
+
+    <!-- dialog clipboard warning -->
+    <string name="clipboard_warning">Varning! Andra applikationer på den här enheten har möjlighet att läsa från urklipp. Använd med försiktighet. Denna varning visas bara en gång.</string>
+    <string name="clipboard_positive">Godkänn</string>
+    <string name="clipboard_negative">Avbryt</string>
+    <string name="clipboard_warning_heeded">Ett bra val.</string>
+    <string name="fp_enabled">aktiverad</string>
+    <string name="fp_not_enabled">ej aktiverad</string>
+
+    <!-- audit logging -->
+    <string name="audit_fingerprint_authenticated">Autentiserad med fingeravtryck.</string>
+    <string name="audit_password_authenticated">Autentiserad med lösenord.</string>
+    <string name="audit_security_list_update">Uppdaterade säkerhetslistor.</string>
+    <string name="audit_displayed_password">Visat lösenord: %1$s@%2$s.</string>
+    <string name="audit_coped_password">Lösenord kopierat till urklipp: %1$s@%2$s.</string>
+    <string name="audit_added_credential">Lade till uppgift %1$s@%2$s.</string>
+    <string name="audit_removed_credential">Tog bort uppgift %1$s@%2$s.</string>
+    <string name="autofill_name">Autofyll</string>
+
+</resources>
