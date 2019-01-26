@@ -3,7 +3,7 @@ The enigmatic mouse will keep your passwords safe - password manager on Android 
 
 ![mouse enigma preview](https://raw.githubusercontent.com/codingchili/enigmatic-mouse/master/preview.jpg "Current snapshot version")
 
-Password manager in 1000 lines of KOTLIN!
+Password manager in 1500 lines of KOTLIN!
 
 The Enigmatic Mouse is a small password manager, the purpose is to be as small as possible
 while still providing a bearable user experience. By being small The Mouse is auditable by
@@ -81,14 +81,16 @@ This will build the APK and install it onto your device.
 
 ##### Side-loading (APK file)
 Follow the instructions for building an unsigned APK and then copy the .apk to your device. Alternatively download
-an APK from the releases.
+a signed APK from the releases.
 
 1. Enable installation from untrusted sources
 2. open the file to install the APK
 3. Disable installation from untrusted sources
 
-##### Play store
-- not yet available on the play store.
+##### Google Play store
+Now published on the play store!
+
+[Enigmatic Mouse @ Play Store](https://play.google.com/store/apps/details?id=com.codingchili.mouse.enigma)
 
 # Contributing
 Contributions are welcome! We encourage you to look through the available issues,
