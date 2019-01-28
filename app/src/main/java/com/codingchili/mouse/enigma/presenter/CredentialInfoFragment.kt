@@ -86,10 +86,8 @@ class CredentialInfoFragment : Fragment() {
         }
 
         view.findViewById<TextView>(R.id.created_at_date).text = credential.created
-        view.findViewById<TextView>(R.id.header).text = String.format(
-                getString(R.string.credential_header,
-                        credential.username,
-                        credential.domain))
+        view.findViewById<TextView>(R.id.username).text = credential.username
+        view.findViewById<TextView>(R.id.domain).text = credential.domain
 
         val list = view.findViewById<ListView>(R.id.breach_list)
         val adapter = object : ArrayAdapter<PwnedSite>(activity?.applicationContext!!, R.layout.list_item_credential, CredentialBank.pwnsByDomain(credential.domain)) {
