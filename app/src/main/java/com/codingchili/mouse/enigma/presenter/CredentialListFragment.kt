@@ -107,9 +107,9 @@ class CredentialListFragment : Fragment() {
                 R.id.pwned_checker -> {
                     performPwnedCheck()
                 }
-                R.id.import_credentials -> {
+                /*R.id.import_credentials -> {
                     FragmentSelector.import()
-                }
+                }*/
             }
             true
         }
@@ -148,13 +148,13 @@ class CredentialListFragment : Fragment() {
 
                 username.text = credential.username
 
-                val domain = item.findViewById<TextView>(R.id.url)
-                domain.text = credential.domain
-
                 val pwned = CredentialBank.pwnsByDomain(credential.domain)
+                val domain = item.findViewById<TextView>(R.id.url)
+
+                domain.text = credential.domain
+                domain.setTextColor(context.getColor(R.color.text))
 
                 pwned.forEach { pwn ->
-                    domain.setTextColor(context.getColor(R.color.text))
                     if (!pwn.acknowledged) {
                         domain.setTextColor(context.getColor(R.color.accent))
                     }
