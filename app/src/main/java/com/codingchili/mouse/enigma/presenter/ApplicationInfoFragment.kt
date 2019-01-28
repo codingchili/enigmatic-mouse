@@ -1,5 +1,7 @@
 package com.codingchili.mouse.enigma.presenter
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +21,12 @@ class ApplicationInfoFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_application_info, container, false)
 
         view.findViewById<BottomAppBar>(R.id.bottom_app_bar).navigationIcon = null
+
+        view.findViewById<View>(R.id.octocat).setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(getString(R.string.github_url))
+            startActivity(intent)
+        }
 
         view.findViewById<View>(R.id.cancel).setOnClickListener {
             FragmentSelector.back()

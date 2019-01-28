@@ -51,13 +51,13 @@
     <string name="credential_unmark_pwned">承认违约</string>
     <string name="clipboard_failed">无法复制到剪贴板</string>
     <string name="clipboard_success">复制到剪贴板</string>
-    <string name="credential_header">%1$s@%2$s</string>
     <string name="info_close">关</string>
     <string name="launch_website">打开浏览器</string>
     <string name="show_password">显示密码</string>
     <string name="copy_clipboard">复制</string>
 
-    
+
+    <string name="github_url">https://github.com/codingchili/enigmatic-mouse</string>
     <string name="tap_octocat">点击Octocat在GitHub上访问我们</string>
     <string name="app_info_string"><b>Copyright 2018 Robin Duda</b>\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
 
