@@ -1,4 +1,4 @@
-# enigmatic-mouse
+# Enigmatic Mouse [![Build Status](https://travis-ci.org/codingchili/enigmatic-mouse.svg?branch=master)](https://travis-ci.org/codingchili/enigmatic-mouse)
 The enigmatic mouse will keep your passwords safe - password manager on Android written in Kotlin.
 
  View the [YouTube Demo](https://www.youtube.com/watch?v=CcIvlFmBL5w).
@@ -92,13 +92,15 @@ a signed APK from the releases.
 ##### Google Play store
 Now published on the play store!
 
-[Enigmatic Mouse @ Play Store](https://play.google.com/store/apps/details?id=com.codingchili.mouse.enigma)
+[![Enigmatic Mouse @ Play Store](https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.codingchili.mouse.enigma)
 
 # Contributing
 Contributions are welcome! We encourage you to look through the available issues,
 create new or comment on existing. All ideas are welcome and well needed.
 
 Code reviews and security audits are also very welcome.
+
+[![donate](https://img.shields.io/badge/donate-%CE%9ETH%20/%20%C9%83TC-ff00cc.svg?style=flat&logo=ethereum)](https://commerce.coinbase.com/checkout/673e693e-be6d-4583-9791-611da87861e3)
 
 # Resources
 During development the following talk has been very helpful in implementing the security scheme.
