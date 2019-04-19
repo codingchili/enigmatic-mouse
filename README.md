@@ -46,7 +46,7 @@ master key is recovered, we initialize the Realm encrypted database with it.
 ### Permissions
 
 The following permissions are required.
-```
+```xml
 <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
@@ -66,7 +66,7 @@ depends on this permission "security lists".
 Open the project in Android Studio, Build -> Make Project.
 
 Without Android studio,
-```
+```console
 ./gradlew build
 ```
 
