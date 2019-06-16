@@ -33,8 +33,8 @@ class CredentialInfoFragment : Fragment() {
         return this
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater!!.inflate(R.menu.credential_info, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.credential_info, menu)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -45,7 +45,7 @@ class CredentialInfoFragment : Fragment() {
 
         toolbar.setNavigationOnClickListener {
             val bottomNavDrawerFragment = BottomNavigationDrawerFragment()
-            bottomNavDrawerFragment.show(activity?.supportFragmentManager, bottomNavDrawerFragment.tag)
+            bottomNavDrawerFragment.show(activity?.supportFragmentManager!!, bottomNavDrawerFragment.tag)
         }
 
         toolbar.setOnMenuItemClickListener { item ->

@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.autofill.AutofillId
 import android.view.autofill.AutofillValue
 import android.widget.RemoteViews
-import android.util.MutableInt
 
 
 
@@ -130,7 +129,7 @@ class AutoService: AutofillService() {
     }
 
     private fun parseNode(root: AssistStructure.ViewNode, allHints: MutableList<String>,
-                          autofillSaveType: MutableInt, autofillIds: MutableList<AutofillId>,
+                          autofillSaveType: Int, autofillIds: MutableList<AutofillId>,
                           focusedAutofillIds: MutableList<AutofillId>) {
        /* val hints = root.autofillHints
         if (hints != null) {

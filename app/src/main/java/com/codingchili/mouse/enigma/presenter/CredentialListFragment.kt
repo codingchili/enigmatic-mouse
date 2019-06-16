@@ -28,10 +28,10 @@ class CredentialListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_credential_list, container, false)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater!!.inflate(R.menu.credential_list, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.credential_list, menu)
 
-        menu!!.findItem(R.id.clean_all_dev).isVisible = preferences.developerOptions()
+        menu.findItem(R.id.clean_all_dev).isVisible = preferences.developerOptions()
     }
 
     private fun performLogoClear() {
@@ -92,7 +92,7 @@ class CredentialListFragment : Fragment() {
 
         toolbar.setNavigationOnClickListener {
             val bottomNavDrawerFragment = BottomNavigationDrawerFragment()
-            bottomNavDrawerFragment.show(activity?.supportFragmentManager, bottomNavDrawerFragment.tag)
+            bottomNavDrawerFragment.show(activity?.supportFragmentManager!!, bottomNavDrawerFragment.tag)
         }
 
         toolbar.setOnMenuItemClickListener { item ->

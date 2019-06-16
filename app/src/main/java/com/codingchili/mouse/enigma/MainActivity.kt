@@ -42,8 +42,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager?.backStackEntryCount!! > 1) {
-            supportFragmentManager?.popBackStack()
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            supportFragmentManager.popBackStack()
         } else {
             finish()
         }

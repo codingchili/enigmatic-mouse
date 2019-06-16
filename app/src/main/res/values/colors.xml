@@ -5,6 +5,7 @@
     <color name="secondary">#7b1fa2</color>
     <color name="accent">#e65100</color>
     <color name="shadow">#40323232</color>
+    <color name="gray">#323232</color>
     <color name="text">#ffffff</color>
 
     <color name="password_weak">#d50000</color>
