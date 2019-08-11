@@ -14,6 +14,7 @@
         android:layout_height="64dp"
         android:background="@color/primary"
         android:outlineProvider="background"
+        app:layout_constraintTop_toTopOf="parent"
         android:elevation="8dp">
 
         <TextView
